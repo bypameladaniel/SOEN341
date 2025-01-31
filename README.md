@@ -4,6 +4,8 @@
 Alexandre Catellier (40281048) - catalexandre
 Mia Moreau (40275499) - MiaM27
 
+Soukayna Haitami (40280964) - Soukay55
+
 ## project
 This project is about developping a software application where users can message each other in groups or with direct messages. There will be different channels to keep the discussions organized by topic and there will be two types of users: Admins and members.
 The admin will be able to moderate conversations to keep them appropriate while being able to create and delete channels. Users will be able to send and view messages in these channels.
