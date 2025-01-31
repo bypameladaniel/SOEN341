@@ -3,6 +3,7 @@
 ### Team members
 Alexandre Catellier (40281048) - catalexandre
 Amal Sabsabi (40273376) - amal-sabs
+Mia Moreau (40275499) - MiaM27
 
 ## Project
 This project is about developping a software application where users can message each other in groups or with direct messages. There will be different channels to keep the discussions organized by topic and there will be two types of users: Admins and members.
