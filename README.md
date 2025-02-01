@@ -7,6 +7,7 @@ Mia Moreau (40275499) - MiaM27
 Wissem Oumsalem (40292712) - wisoums
 Soukayna Haitami (40280964) - Soukay55
 Brandon Hakong (40283664) - brandonhakong
+Pamela Daniel (40286602) - bypameladaniel
 
 ## Project
 This project is about developping a software application where users can message each other in groups or with direct messages. There will be different channels to keep the discussions organized by topic and there will be two types of users: Admins and members.
