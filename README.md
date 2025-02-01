@@ -5,6 +5,7 @@
 |:--------------------:|:----------:|:--------------:|
 | Alexandre Catellier | 40281048    | [catalexandre](https://github.com/catalexandre) |
 | Amal Sabsabi        | 40273376    | [amal-sabs](https://github.com/amal-sabs) |
+| Brandon Hakong      | 40283664    | [brandonhakong](https://github.com/brandonhakong) |
 | Mia Moreau          | 40275499    | [MiaM27](https://github.com/MiaM27) |
 | Pamela Daniel       | 40286602    | [bypameladaniel](https://github.com/bypameladaniel) |
 | Soukayna Haitami    | 40280964    | [Soukay55](https://github.com/Soukay55) |
