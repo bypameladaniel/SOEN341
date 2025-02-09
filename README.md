@@ -1,6 +1,9 @@
 # SOEN341
 
 ### Team members
+
+📝 Tutorial: UK-X 1
+
 | Name                 | Student ID | GitHub Profile |
 |:--------------------:|:----------:|:--------------:|
 | Alexandre Catellier | 40281048    | [catalexandre](https://github.com/catalexandre) |
@@ -22,7 +25,7 @@ This project is about developping a software application where users can message
 Our team has decided to build the application as a web app while using these frameworks and languages:
 
 - **Frontend** : ReactJS  
-- **Backend** : PHP (Laravel Framework)  
+- **Backend** : Python (Django Framework)
 - **Database** : MySQL
 
 ## Features
