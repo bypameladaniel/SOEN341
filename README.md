@@ -26,7 +26,7 @@ Our team has decided to build the application as a web app while using these fra
 
 - **Frontend** : ReactJS  
 - **Backend** : Python (Django Framework)
-- **Database** : MySQL
+- **Database** : SQLite
 
 ## Features
 Three core features will be implemented in this web app.
