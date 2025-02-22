@@ -10,14 +10,12 @@ def api_example(request):
     return Response(data)
 
 class ReactAppView(TemplateView):
-    template_name = 'index.html'
+    template_name = 'index.html'  # Ensure this points to your React index.html
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Add any context data here if needed
+        # Add any additional context data here
         return context
-
-# Create your views here.
 
 #def home(request):
     #return HttpResponse("Hello World")
