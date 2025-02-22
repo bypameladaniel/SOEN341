@@ -6,7 +6,7 @@ const Layout = () => {
       <nav>
         <ul>
           <li>
-            <Link to="/">Authentification</Link>
+            <Link to="/authentication">Authentication</Link>
           </li>
           <li>
             <Link to="/forgotpassword">Forgot Password</Link>
