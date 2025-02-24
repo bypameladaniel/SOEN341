@@ -1,0 +1,38 @@
+#chatInputContainer {
+    outline: 2px solid #21303b;
+    border-radius: 30px;
+    background-color: #DAE1E7;
+    width: 1000px;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding: 10px;
+    display: flex;
+}
+
+#chatInputTextArea {
+    resize: none;
+    border: none;
+    outline: none;
+    background: transparent;
+    overflow: hidden;
+    color: black;
+    width: 100%;
+    line-height: 1.5;
+    font-size: 16px;
+    overflow-y: auto;
+    max-height: 250px;
+    margin-right: 5px;
+    margin-left: 5px;
+    padding-right: 10px;
+    align-self: center;
+}
+
+#sendMessageButton {
+    background-color: #27496D;
+    padding: 10px;
+    border-radius: 30px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
