@@ -1,60 +1,64 @@
-//NEEDS BACKEND
-// import { useState, useEffect } from "react";    
-// import {jwtDecode} from 'jwt-decode';
-// import { ACCESS_TOKEN, REFRESH_TOKEN } from "./token.ts";
+import { useState, useEffect } from "react";    
+import {jwtDecode} from 'jwt-decode';
+import api from "./api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "./token.ts";
 
-// export const useAuthentication = () => {
-//     const [isAuthorized, setIsAuthorized] = useState(false);
+interface DecodedToken {
+    exp: number;
+}
 
-//     useEffect(() => {
-//         const auth = async () => {
-//             const token = localStorage.getItem(ACCESS_TOKEN);
+export const useAuthentication = () => {
+    const [isAuthorized, setIsAuthorized] = useState(false);
 
-//             console.log('ACCESS_TOKEN', token);
+    useEffect(() => {
+        const auth = async () => {
+            const token = localStorage.getItem(ACCESS_TOKEN);
 
-//             if (token) {
-//                 const decoded = jwtDecode(token);
-//                 const tokenExpiration = decoded.exp;
-//                 const now = Date.now() / 1000;
+            console.log('ACCESS_TOKEN', token);
 
-//                 if (tokenExpiration < now) {
-//                     await refreshToken();
+            if (token) {
+                const decoded = jwtDecode<DecodedToken>(token);
+                const tokenExpiration = decoded.exp;
+                const now = Date.now() / 1000;
 
-//                 } else {
-//                     setIsAuthorized(true);
-//                 }
-//             } else {
-//                 setIsAuthorized(false);
-//             }
-//         };
-//         auth().catch(() => setIsAuthorized(false)); //
-//     }, []); 
+                if (tokenExpiration < now) {
+                    await refreshToken();
+
+                } else {
+                    setIsAuthorized(true);
+                }
+            } else {
+                setIsAuthorized(false);
+            }
+        };
+        auth().catch(() => setIsAuthorized(false)); 
+    }, []); 
 
 
 
-//     const refreshToken = async () => {
-//         const refreshToken = localStorage.getItem(REFRESH_TOKEN);
-//         try {
-//             const res = await api.post('/api/token/refresh/', {
-//                 refresh: refreshToken,
-//             });
-//             if (res.status === 200) {
-//                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
-//                 setIsAuthorized(true);
-//             } else{
-//                 setIsAuthorized(false);
-//             }
-//         } catch (error) {
-//             console.error('Error refreshing token', error);
-//             setIsAuthorized(false);
-//         }
-//     };
+    const refreshToken = async () => {
+        const refreshToken = localStorage.getItem(REFRESH_TOKEN);
+        try {
+            const res = await api.post('/api/token/refresh/', {
+                refresh: refreshToken,
+            });
+            if (res.status === 200) {
+                localStorage.setItem(ACCESS_TOKEN, res.data.access);
+                setIsAuthorized(true);
+            } else{
+                setIsAuthorized(false);
+            }
+        } catch (error) {
+            console.error('Error refreshing token', error);
+            setIsAuthorized(false);
+        }
+    };
 
-//     const logout = () => {
-//         localStorage.removeItem(ACCESS_TOKEN);
-//         setIsAuthorized(false);
-//         window.location.reload();
-//     }
+    const logout = () => {
+        localStorage.removeItem(ACCESS_TOKEN);
+        setIsAuthorized(false);
+        window.location.reload();
+    }
 
-//     return { isAuthorized, logout };
-// }
+    return { isAuthorized, logout };
+}

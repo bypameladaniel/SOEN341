@@ -1,4 +1,4 @@
-import "./ResetPassword.css";
+import "../styles/ResetPassword.css";
 
 const ResetPassword = () => {
   return (

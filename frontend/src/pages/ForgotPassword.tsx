@@ -1,4 +1,4 @@
-import "./ForgotPassword.css";
+import "../styles/ForgotPassword.css";
 import {Mail} from "lucide-react";
 
 
@@ -12,7 +12,7 @@ const ForgotPassword = () => {
       </div>
       <div className="inputs">
         <div className="input">
-          <Mail class="login-signup-icons" />
+          <Mail className="login-signup-icons" />
           <input type="email" placeholder="Email ID" />
         </div>
       </div>
