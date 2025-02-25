@@ -1,0 +1,172 @@
+/* colours
+000000 - black
+21303b - grey
+142850 - dark blue
+27496D - lighter blue
+DAE1E7 - light grey
+FFFFFF - white */
+
+/* TO DO:
+    - display actual username, email and role (connect to database, backend)
+    - implement this page in the settings page ("update profile" option)
+    - implement change password option
+    - add username restrictions?
+     */
+.profile {
+    background-color: #21303b;
+    height: 100vh; /* Full viewport height */
+    width: 100vw;  /* Full viewport width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 665px;
+    width: 455px;
+    background-color: #B3C8CF;
+    border-radius: 20px; /* Add rounded edges */
+    overflow: hidden; 
+}
+
+
+.profile-box {
+    background: #DAE1E7;
+    color:#1b3c5d;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    width: 350px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap:5px;
+}
+
+.profile-pic-container {
+    background-color: #B3C8CF;
+    color:#DAE1E7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border-radius: 10px;
+    width: 100%;
+    gap:2px;
+}
+
+.profile-pic {
+    background-color: #DAE1E7; /* Remove background color */
+    border-radius: 50%;
+    border: none; /* Remove border completely */
+    height: 120px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.remove-pfp{
+    background-color: #27496D;
+    padding: 6px 10px; /* Smaller padding */
+    font-size: 14px; /* Smaller font size */
+    border-radius: 5px;
+    color: white; /* Text color */
+    border: none;
+}
+
+.remove-pfp:hover{
+    background-color: #21303b;
+}
+
+.change-pfp{
+    background-color: #27496D;
+    padding: 6px 10px; /* Smaller padding */
+    font-size: 14px; /* Smaller font size */
+    border-radius: 5px;
+    color: white; /* Text color */
+    border: none;
+
+}
+
+.change-pfp:hover{
+    background-color: #21303b;
+}
+
+.change-username{
+    background-color: #27496D;
+    padding: 7px 12px;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.change-username:hover{
+    background-color: #21303b;
+}
+
+.update-username{
+    background-color: #27496D;
+    padding: 7px 12px;
+    font-size: 14px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.update-username:hover{
+    background-color: #21303b;
+}
+
+
+.username-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adds space between the input and button */
+}
+
+.new-username-box {
+    background-color: #556068;
+    padding: 6px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.new-username-box::placeholder {
+    color: white;
+}
+
+.profile-details {
+    background-color: #DAE1E7;
+    color: #1b3c5d;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+    width: 100%;
+   
+}
+
+.change-password {
+    margin-top: 10px;
+    padding: 10px 16px;
+    background-color: #27496D;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.change-password:hover {
+    background-color: #1b3c5d;
+}
+
+
