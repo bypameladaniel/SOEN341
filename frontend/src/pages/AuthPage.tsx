@@ -2,17 +2,17 @@ import { useState, useEffect } from "react";
 import AuthForm from "../components/AuthForm";
 
 type AuthPageProps = {
-  initialMethod: "login" | "signup";
+  initialMethod: "Login" | "Sign Up";
 };
 
 const AuthPage: React.FC<AuthPageProps> = ({ initialMethod }) => {
-  const [method, setMethod] = useState<"login" | "signup">(initialMethod);
+  const [method, setMethod] = useState<"Login" | "Sign Up">(initialMethod);
 
   useEffect(() => {
     setMethod(initialMethod);
   }, [initialMethod]);
 
-  const route = method === "login" ? "/api/token/" : "/api/user/register/";
+  const route = method === "Login" ? "/app/token/" : "/app/user/register/";
 
   return (
     <div>

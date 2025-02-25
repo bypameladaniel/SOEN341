@@ -10,10 +10,10 @@ import AuthPage from "./pages/AuthPage";
 const App = () => {
   const {isAuthorized} = useAuthentication()
   const ProtectedLogin = () => {
-    return isAuthorized ? <Navigate to='/' /> : <AuthPage initialMethod='login' />
+    return isAuthorized ? <Navigate to='/' /> : <AuthPage initialMethod='Login' />
   }
   const ProtectedRegister = () => {
-    return isAuthorized ? <Navigate to='/' /> : <AuthPage initialMethod='signup' />
+    return isAuthorized ? <Navigate to='/' /> : <AuthPage initialMethod='Sign Up' />
   }
 
   return (
@@ -22,7 +22,7 @@ const App = () => {
       {/*insert sidebar here? */}
       <Routes>
         <Route path="/" element={<Layout/>}>
-          <Route path="authentication" element={<AuthPage initialMethod="login"></AuthPage>}></Route>
+          <Route path="authentication" element={<AuthPage initialMethod="Login"></AuthPage>}></Route>
           <Route path="/login" element={<ProtectedLogin />}/>
           <Route path="/signup" element={<ProtectedRegister />}/>
           <Route path="*" element={<NotFound/>}/>

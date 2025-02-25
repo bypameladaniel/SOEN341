@@ -7,12 +7,12 @@ import { Mail, User, KeyRound } from "lucide-react";
 
 interface AuthFormProps {
   route: string;
-  method: "login" | "signup";
+  method: "Login" | "Sign Up";
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({ route, method }) => {
   const [action, setAction] = useState<"Login" | "Sign Up">(
-    method === "login" ? "Login" : "Sign Up"
+    method === "Login" ? "Login" : "Sign Up"
   );
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
@@ -28,7 +28,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ route, method }) => {
     setError(null);
     setSuccess(null);
 
-    if (!email || !password || (action === "Sign Up" && !username)) {
+    if (!username || !password || (action === "Sign Up" && !email)) {
       setError("All fields are required.");
       setLoading(false);
       alert("All fields are required");
@@ -38,7 +38,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ route, method }) => {
     try {
       const res = await api.post(route, { username, password });
 
-      if (method === "login") {
+      if (method === "Login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         navigate("/");
@@ -90,6 +90,16 @@ const AuthForm: React.FC<AuthFormProps> = ({ route, method }) => {
             {error && <div className="error-message">{error}</div>}
             {success && <div className="success-message">{success}</div>}
             <div className="inputs">
+              <div className="input">
+                <User className="login-signup-icons" />
+                <input
+                  type="text"
+                  name="username"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
               {action === "Sign Up" && (
                 <div className="input">
                   <Mail className="login-signup-icons" />
@@ -103,16 +113,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ route, method }) => {
                 </div>
               )}
               <div className="input">
-                <User className="login-signup-icons" />
-                <input
-                  type="text"
-                  name="username"
-                  placeholder="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </div>
-              <div className="input">
                 <KeyRound className="login-signup-icons" />
                 <input
                   type="password"
@@ -125,19 +125,22 @@ const AuthForm: React.FC<AuthFormProps> = ({ route, method }) => {
             </div>
             {action === "Login" && (
               <div className="forgot-password">
-                Lost Password? <span><Link to="/forgotpassword">Click here!</Link></span>
+                Lost Password?{" "}
+                <span>
+                  <Link to="/forgotpassword">Click here!</Link>
+                </span>
               </div>
             )}
             <div className="submit-container">
               <button
-                type="submit"
+                type={action === "Sign Up" ? "submit" : "button"}
                 className={action === "Login" ? "submitgray" : "submit"}
                 onClick={() => setAction("Sign Up")}
               >
                 Sign Up
               </button>
               <button
-                type="submit"
+                type={action === "Login" ? "submit" : "button"}
                 className={action === "Sign Up" ? "submitgray" : "submit"}
                 onClick={() => setAction("Login")}
               >
