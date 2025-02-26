@@ -2,7 +2,13 @@ import { Send } from 'lucide-react'
 import {useState} from 'react'
 import './ChatInputTextBox.css'
 
-function ChatInputTextBox() {
+interface ChatInputTextBoxProps {
+    onSend: (message: string) => void;
+  }
+
+
+  const ChatInputTextBox: React.FC<ChatInputTextBoxProps> = ({ onSend }) =>  {
+
     const [message, setMessage] = useState("");
 
     const autoResize = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -12,10 +18,12 @@ function ChatInputTextBox() {
         event.target.style.height = event.target.scrollHeight + "px";
     };
 
-    function sendMessage() {
+    function enter() {
+        if(message !== "") {
         setMessage("");
         resize();
-        //api call to send message
+        onSend(message);
+        }
     }
 
     function resize() {
@@ -28,7 +36,7 @@ function ChatInputTextBox() {
     const handleEnterTextArea = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if(event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
-            sendMessage();
+            enter();
         }
     }
 
@@ -42,7 +50,7 @@ function ChatInputTextBox() {
         onChange={autoResize}
         onKeyDown={handleEnterTextArea}
         />
-        <div id="sendMessageButton" onClick={sendMessage}><Send id="sendIcon"></Send></div>
+        <div id="sendMessageButton" onClick={enter}><Send id="sendIcon"></Send></div>
         </div>
     )
 }

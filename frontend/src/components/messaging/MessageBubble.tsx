@@ -9,7 +9,12 @@ interface MessageBubbleProps {
 const MessageBubble: React.FC<MessageBubbleProps> = ({ message, sender }) => {
     return (
         <div className={`Bubble test ${sender ? "sender" : "receiver"}`}> 
-            {message}
+            {message.split('\n').map((line, index) => (
+        <React.Fragment key={index}>
+          {line}
+          <br />
+        </React.Fragment>
+      ))}
         </div>
     )
 }
