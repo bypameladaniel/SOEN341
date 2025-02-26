@@ -1,6 +1,8 @@
 import { Outlet, Link } from "react-router-dom";
+import logout from "./logout";
 
 const Layout = () => {
+
   return (
     <>
       <nav>
@@ -13,6 +15,9 @@ const Layout = () => {
           </li>
           <li>
             <Link to="/resetpassword">Reset Password</Link>
+          </li>
+          <li>
+            <button onClick={logout}>Logout</button>
           </li>
         </ul>
       </nav>
