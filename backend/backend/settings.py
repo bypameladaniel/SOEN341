@@ -171,6 +171,6 @@ AUTH_USER_MODEL = 'app.User'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = '/callback/'
+#LOGIN_REDIRECT_URL = '/callback/'
 
 SOCIALACCOUNT_STORE_TOKENS = True

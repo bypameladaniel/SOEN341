@@ -10,10 +10,7 @@ urlpatterns = [
     path("app/user/register", UserCreate.as_view(), name ="user_create"), #creating user
     path("app/token/",TokenObtainPairView.as_view(), name="token_obtain_pair"), #for login and generating access and refresh tokens
     path("app/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("app/change-password/", ChangePasswordView.as_view(), name="change_password"),
     path("app/logout/", LogoutView.as_view(), name="logout"),
-    path("app-auth/",include('rest_framework.urls')),
-    path("accounts/",include("allauth.urls")),
     path("app/auth/user/",UserDetailView.as_view(), name = "user_detail"),
     path("",include('app.urls')),
     path("channels/", include('channels.urls')),
