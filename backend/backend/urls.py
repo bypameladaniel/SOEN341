@@ -7,7 +7,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("app/user/register", UserCreate.as_view(), name ="user_create"), #creating user
+    path("app/user/register/", UserCreate.as_view(), name ="user_create"), #creating user
     path("app/token/",TokenObtainPairView.as_view(), name="token_obtain_pair"), #for login and generating access and refresh tokens
     path("app/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("app/logout/", LogoutView.as_view(), name="logout"),

@@ -4,13 +4,13 @@ import api from "../api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../token";
 import "../styles/LoginSignup.css";
 import { Mail, User, KeyRound } from "lucide-react";
+import './AuthForm.css'
 
 interface AuthFormProps {
-  route: string;
   method: "Login" | "Sign Up";
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ route, method }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ method }) => {
   const [action, setAction] = useState<"Login" | "Sign Up">(
     method === "Login" ? "Login" : "Sign Up"
   );
@@ -35,18 +35,17 @@ const AuthForm: React.FC<AuthFormProps> = ({ route, method }) => {
     }
 
     try {
-      const res = await api.post(route, { username, password });
+      let route = action === "Login" ? "http://localhost:8000/app/token/" : "http://localhost:8000/app/user/register/";
+      const res = await api.post(route, { username: username, password: password });
 
-      if (method === "Login") {
+      if (action === "Login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         navigate("/");
         window.location.reload();
       } else {
         setSuccess("Registration successful. Please login.");
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+        setAction("Login");
       }
     } catch (error: any) {
       console.error(error);

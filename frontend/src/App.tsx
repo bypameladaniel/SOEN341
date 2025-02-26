@@ -3,16 +3,9 @@ import {useAuthentication} from "./auth.ts";
 // import { Home } from "lucide-react";
 import Layout from "./components/layout.tsx";
 import NotFound from "./pages/NotFound";
-import AuthPage from "./pages/AuthPage";
+import AuthForm from "./components/AuthForm.tsx";
 
 const App = () => {
-  const {isAuthorized} = useAuthentication()
-  const ProtectedLogin = () => {
-    return isAuthorized ? <Navigate to='/' /> : <AuthPage initialMethod='Login' />
-  }
-  const ProtectedRegister = () => {
-    return isAuthorized ? <Navigate to='/' /> : <AuthPage initialMethod='Sign Up' />
-  }
 
   return (
     <div>
@@ -20,9 +13,8 @@ const App = () => {
       {/*insert sidebar here? */}
       <Routes>
         <Route path="/" element={<Layout/>}>
-          <Route path="authentication" element={<AuthPage initialMethod="Login"></AuthPage>}></Route>
-          <Route path="/login" element={<ProtectedLogin />}/>
-          <Route path="/signup" element={<ProtectedRegister />}/>
+          
+          <Route path="authentication" element={<AuthForm method="Sign Up"></AuthForm>}></Route>
           <Route path="*" element={<NotFound/>}/>
         </Route>
       </Routes>

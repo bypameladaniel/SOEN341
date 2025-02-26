@@ -15,7 +15,7 @@ from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from .serializers import ChangePasswordSerializer
+#from .serializers import ChangePasswordSerializer
 from django.contrib.auth import update_session_auth_hash
 from rest_framework import status
 from rest_framework.views import APIView
