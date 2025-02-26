@@ -31,7 +31,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ route, method }) => {
     if (!username || !password || (action === "Sign Up" && !email)) {
       setError("All fields are required.");
       setLoading(false);
-      alert("All fields are required");
       return;
     }
 
@@ -123,14 +122,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ route, method }) => {
                 />
               </div>
             </div>
-            {action === "Login" && (
-              <div className="forgot-password">
-                Lost Password?{" "}
-                <span>
-                  <Link to="/forgotpassword">Click here!</Link>
-                </span>
-              </div>
-            )}
             <div className="submit-container">
               <button
                 type={action === "Sign Up" ? "submit" : "button"}
