@@ -7,7 +7,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username']
+        fields = ['id', 'username', 'email', 'role', 'profile_picture']
 
 class ChannelSerializer(serializers.ModelSerializer):
     members = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
@@ -19,7 +19,7 @@ class ChannelSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'picture', 'members', 'members_detail']
         
 class MessageSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField()
+    user = UserSerializer(read_only=True)
     channel = serializers.PrimaryKeyRelatedField(queryset=Channel.objects.all())
     timestamp = serializers.DateTimeField(read_only=True)
     
