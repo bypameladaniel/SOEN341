@@ -11,10 +11,14 @@
 
 .sender {
     background-color: #27496D;
+    border-bottom-right-radius: 0px;
+    align-self: flex-end;
 }
 
 .receiver {
     background-color: #21303b;
+    border-bottom-left-radius: 0px;
+    align-self: flex-start;
 }
 
 .BubbleText {
