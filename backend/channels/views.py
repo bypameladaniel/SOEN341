@@ -61,3 +61,13 @@ def list_messages_in_channel(request, channel_id):
         return JsonResponse({'messages': serializer.data}, status=200)
     else:
         return JsonResponse({"error": "Method not allowed"}, status=405)
+    
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def create_channel(request):
+    serializer = ChannelSerializer(data=request.data, context={"request": request})
+    if serializer.is_valid():
+        channel = serializer.save()
+        return Response(ChannelSerializer(channel, context={"request": request}).data, status=201)
+    return Response(serializer.errors, status=400)
