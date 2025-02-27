@@ -15,18 +15,19 @@ const App = () => {
   return (
     <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Layout/>}> {/*Layout to be changed so signup/login is done on homepage first*/}
-        <Route path="login-signup" element={<LoginSignup/>}/>
-        <Route path="GroupSidebar" element={<GroupSidebar />}/>
-        <Route path="DirectSidebar" element={<DirectSidebar />}/>
-        <Route path="Settings" element={<Settings />}/>
-        <Route path="Profile" element={<Profile />}/>
-        <Route path="forgotpassword" element={<ForgotPassword/>}/>
-        <Route path="resetpassword" element={<ResetPassword/>}/>
-        
-      </Route>
-    </Routes>
-    </BrowserRouter>
+  <Route path="/" element={<Layout/>}>
+    <Route path="login-signup" element={<LoginSignup/>}/>
+    <Route path="Settings" element={<Settings />}/>
+    <Route path="Profile" element={<Profile />}/>
+    <Route path="forgotpassword" element={<ForgotPassword/>}/>
+    <Route path="resetpassword" element={<ResetPassword/>}/>
+  </Route>
+
+  {/* Separate Routes for Sidebars (Not inside Layout) */}
+  <Route path="GroupSidebar" element={<GroupSidebar />} />
+  <Route path="DirectSidebar" element={<DirectSidebar />} />
+  </Routes>
+  </BrowserRouter>
   )
 }
 
