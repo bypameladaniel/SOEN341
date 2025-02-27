@@ -27,23 +27,30 @@ def channel_list(request):
     except Exception as e:
         return Response({"error": str(e)}, status=500)
 
-@login_required
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def join_channel(request, channel_id):
     try:
-        channel = Channel.objects.get(id=channel_id)
-    except Channel.DoesNotExist:
-        return JsonResponse({'error': 'Channel not found'}, status=404)
+        channel = get_object_or_404(Channel, id=channel_id)
+        user = request.user
 
-    user = request.user
+        # Check if user is already a member
+        if user in channel.members.all():
+            return Response({'message': 'User is already a member'}, status=200)
 
-    # Check if the user is already a member
-    if user in channel.members.all():
-        return JsonResponse({'message': 'User is already a member'}, status=200)
+        # Add user to the channel
+        channel.members.add(user)
+        
+        # Serialize updated channel with member details
+        serializer = ChannelSerializer(channel, context={"request": request})
 
-    # Add the user to the channel
-    channel.members.add(user)
-    
-    return JsonResponse({'message': 'Successfully joined the channel'}, status=200)
+        return Response({
+            'message': 'Successfully joined the channel',
+            'channel': serializer.data
+        }, status=200)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
