@@ -15,8 +15,8 @@ const App = () => {
   return (
     <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Layout/>}>
-        <Route index element={<LoginSignup/>}/>
+      <Route path="/" element={<Layout/>}> {/*Layout to be changed so signup/login is done on homepage first*/}
+        <Route path="login-signup" element={<LoginSignup/>}/>
         <Route path="GroupSidebar" element={<GroupSidebar />}/>
         <Route path="DirectSidebar" element={<DirectSidebar />}/>
         <Route path="Settings" element={<Settings />}/>

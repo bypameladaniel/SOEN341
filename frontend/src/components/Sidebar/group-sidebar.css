@@ -37,5 +37,6 @@
 .sidebar-bottom {
     border-top: 1px solid #556068;
     padding-top: 1rem;
+    list-style: none;
     
 }
