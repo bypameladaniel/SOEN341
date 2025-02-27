@@ -3,9 +3,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import AuthenticationFailed
 
-from django.conf import settings
 
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -36,11 +35,10 @@ def join_channel(request, channel_id):
 
     user = request.user
 
-    # Check if the user is already a member
+
     if user in channel.members.all():
         return JsonResponse({'message': 'User is already a member'}, status=200)
 
-    # Add the user to the channel
     channel.members.add(user)
     
     return JsonResponse({'message': 'Successfully joined the channel'}, status=200)
@@ -50,7 +48,6 @@ def join_channel(request, channel_id):
 def list_messages_in_channel(request, channel_id):
     if request.method == 'GET':
         try:
-            # If the Channel does not exist, the user should be redirected to a 404 page
             channel = Channel.objects.get(id=channel_id)
         except Channel.DoesNotExist:
             return JsonResponse({'error': 'Channel not found'}, status=404)
