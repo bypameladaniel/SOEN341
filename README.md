@@ -1,9 +1,8 @@
 # SOEN341
 
-### Team members
-
 📝 Tutorial: UK-X 1
 
+### Team members
 | Name                 | Student ID | GitHub Profile |
 |:--------------------:|:----------:|:--------------:|
 | Alexandre Catellier | 40281048    | [catalexandre](https://github.com/catalexandre) |
