@@ -11,9 +11,9 @@ from django.contrib.auth.decorators import login_required
 #from rest_framework.decorators import api_view
 #from rest_framework.response import Response
 
+
 # Local imports
 from .models import Channel
-
 
 def channel_list(request):
     if request.method == "GET":
@@ -49,3 +49,47 @@ def join_channel(request, channel_id):
     channel.members.add(user)
     
     return JsonResponse({'message': 'Successfully joined the channel'}, status=200)
+
+# Where Brandon left off
+import json
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from .models import Channel, Message
+
+@csrf_exempt  # Disable CSRF protection for simplicity (use only in development)
+@login_required
+def add_message(request, channel_id):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+
+    try:
+        channel = Channel.objects.get(id=channel_id)
+    except Channel.DoesNotExist:
+        return JsonResponse({"error": "Channel not found"}, status=404)
+
+    user = request.user
+
+    # Check if the user is a member of the channel
+    if user not in channel.members.all():
+        return JsonResponse({"error": "You are not a member of this channel"}, status=403)
+
+    try:
+        data = json.loads(request.body)
+        content = data.get("content", "").strip()
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    if not content:
+        return JsonResponse({"error": "Message content cannot be empty"}, status=400)
+
+    # Create and save the new message
+    message = Message.objects.create(channel=channel, user=user, content=content)
+
+    return JsonResponse({
+        "id": message.id,
+        "channel": channel.id,
+        "user": message.user.username,
+        "content": message.content,
+        "timestamp": message.timestamp.isoformat(),
+    }, status=201)
