@@ -34,14 +34,12 @@ def join_channel(request, channel_id):
         channel = get_object_or_404(Channel, id=channel_id)
         user = request.user
 
-        # Check if user is already a member
+        
         if user in channel.members.all():
             return Response({'message': 'User is already a member'}, status=200)
 
-        # Add user to the channel
         channel.members.add(user)
         
-        # Serialize updated channel with member details
         serializer = ChannelSerializer(channel, context={"request": request})
 
         return Response({
@@ -57,7 +55,6 @@ def join_channel(request, channel_id):
 def list_messages_in_channel(request, channel_id):
     if request.method == 'GET':
         try:
-            # If the Channel does not exist, the user should be redirected to a 404 page
             channel = Channel.objects.get(id=channel_id)
         except Channel.DoesNotExist:
             return JsonResponse({'error': 'Channel not found'}, status=404)
