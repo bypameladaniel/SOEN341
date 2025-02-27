@@ -22,8 +22,8 @@ This project is about developping a software application where users can message
 Our team has decided to build the application as a web app while using these frameworks and languages:
 
 - **Frontend** : ReactJS  
-- **Backend** : PHP (Laravel Framework)  
-- **Database** : MySQL
+- **Backend** : Python (Django Framework)
+- **Database** : SQLite
 
 ## Features
 Three core features will be implemented in this web app.
