@@ -3,8 +3,6 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 from .models import Channel
 from django.test import TestCase
-from django.contrib.auth import get_user_model
-from channels.models import Channel
 from django.utils.crypto import get_random_string
 
 User = get_user_model()
