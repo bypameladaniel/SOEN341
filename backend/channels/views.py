@@ -3,9 +3,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import AuthenticationFailed
 
-from django.conf import settings
 
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 
@@ -49,6 +48,7 @@ def join_channel(request, channel_id):
     except Exception as e:
         return Response({'error': str(e)}, status=500)
 
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_messages_in_channel(request, channel_id):
@@ -64,3 +64,13 @@ def list_messages_in_channel(request, channel_id):
         return JsonResponse({'messages': serializer.data}, status=200)
     else:
         return JsonResponse({"error": "Method not allowed"}, status=405)
+    
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def create_channel(request):
+    serializer = ChannelSerializer(data=request.data, context={"request": request})
+    if serializer.is_valid():
+        channel = serializer.save()
+        return Response(ChannelSerializer(channel, context={"request": request}).data, status=201)
+    return Response(serializer.errors, status=400)

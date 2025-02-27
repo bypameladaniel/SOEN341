@@ -66,3 +66,28 @@ class JoinChannelTest(TestCase):
                 self.assertIn(user, channel.members.all())
         except Channel.DoesNotExist:
             self.fail(f"Channel '{channel_name}' does not exist.")
+
+
+class CreateChannelTest(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", password="testpassword")
+        self.client.force_authenticate(user=self.user)
+        self.create_url = "/api/channels/create/"
+
+    def test_create_channel_authenticated(self):
+        print("\nRunning test: test_create_channel_authenticated")
+        data = {"name": "New Test Channel"}
+        response = self.client.post(self.create_url, data)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["name"], "New Test Channel")
+        print("Channel successfully created.")
+
+    def test_create_channel_unauthenticated(self):
+        print("\nRunning test: test_create_channel_unauthenticated")
+        self.client.logout()
+        data = {"name": "New Test Channel"}
+        response = self.client.post(self.create_url, data)
+        self.assertEqual(response.status_code, 403)
+        print("Unauthenticated user correctly received a 403 Forbidden response.")
+           
