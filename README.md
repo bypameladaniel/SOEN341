@@ -1,5 +1,7 @@
 # SOEN341
 
+📝 Tutorial: UK-X 1
+
 ### Team members
 | Name                 | Student ID | GitHub Profile |
 |:--------------------:|:----------:|:--------------:|
