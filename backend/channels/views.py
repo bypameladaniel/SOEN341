@@ -45,7 +45,6 @@ def join_channel(request, channel_id):
     
     return JsonResponse({'message': 'Successfully joined the channel'}, status=200)
 
-
 @login_required
 def list_messages_in_channel(request, channel_id):
     if request.method == 'GET':
