@@ -10,7 +10,8 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from .models import Channel
+from .models import Channel, Message
+from .serializers import MessageSerializer
 from .serializers import ChannelSerializer
 
 
@@ -44,3 +45,19 @@ def join_channel(request, channel_id):
     
     return JsonResponse({'message': 'Successfully joined the channel'}, status=200)
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def list_messages_in_channel(request, channel_id):
+    if request.method == 'GET':
+        try:
+            # If the Channel does not exist, the user should be redirected to a 404 page
+            channel = Channel.objects.get(id=channel_id)
+        except Channel.DoesNotExist:
+            return JsonResponse({'error': 'Channel not found'}, status=404)
+
+        messages = Message.objects.filter(channel=channel).order_by('timestamp')
+
+        serializer = MessageSerializer(messages, many=True)
+        return JsonResponse({'messages': serializer.data}, status=200)
+    else:
+        return JsonResponse({"error": "Method not allowed"}, status=405)
