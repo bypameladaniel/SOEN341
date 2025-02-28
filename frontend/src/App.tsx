@@ -1,26 +1,48 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import GroupSidebar from "./components/Sidebar/group-sidebar"
-import DirectSidebar from "./components/Sidebar/DM-sidebar"
-import LoginSignup from "./components/login-signup/LoginSignup"
-import Profile from "./components/profile-page/profile"
-import Settings from "./components/settings-page/settings"
+import { BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
+import GroupSidebar from "./components/Sidebar/group-sidebar";
+import DirectSidebar from "./components/Sidebar/DM-sidebar";
+//import LoginSignup from "./components/login-signup/LoginSignup";
+import Profile from "./components/profile-page/profile";
+import Settings from "./components/settings-page/settings";
+import HomePage from "./components/home-page/Home";
+//import MessagingArea from "./components/messaging/";
 import Layout from "./components/layout";
+import { useState } from "react";
 
 const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+
   return (
     <BrowserRouter>
-    <Routes>
-  <Route path="/" element={<Layout/>}>
-    <Route path="login-signup" element={<LoginSignup/>}/>
-    <Route path="Settings" element={<Settings />}/>
-    <Route path="Profile" element={<Profile />}/>
-    <Route path="GroupSidebar" element={<GroupSidebar />} />
-  <Route path="DirectSidebar" element={<DirectSidebar />} />
-  </Route>
-  </Routes>
-  </BrowserRouter>
-  )
-}
+      <Routes>
+        {/* Home Page is the first thing displayed */}
+        <Route path="/" element={<HomePage onLogin={handleLogin} />} />
 
-export default App
+        {/* Protected Routes */}
+        {isAuthenticated && (
+          <>
+            {/* Redirect to GroupSidebar after login */}
+            <Route path="/app" element={<Navigate to="/app/groupsidebar" replace />} />
+
+            {/* Main Layout for sidebar pages */}
+            <Route path="/app" element={<Layout />}>
+              <Route path="groupsidebar" element={<GroupSidebar />} />
+              <Route path="directsidebar" element={<DirectSidebar />} />
+            </Route>
+
+            {/* Settings and Profile as separate pages */}
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/profile" element={<Profile />} />
+          </>
+        )}
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+export default App;
+

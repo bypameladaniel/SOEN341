@@ -57,7 +57,7 @@ const DirectSidebar = () => {
     <nav className="sidebar">
       <ul className="sidebar-list">
         <li className="sidebar-item">
-          <Link to="/GroupSidebar" className="sidebar-link">
+          <Link to="/app/GroupSidebar" className="sidebar-link">
             Channels <UsersRound size={24} />
           </Link>
         </li>
