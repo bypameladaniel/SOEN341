@@ -9,6 +9,9 @@ class Channel(models.Model):
     
     def __str__(self):
         return self.name
+    
+    def is_member(self, user):
+        return self.members.filter(id=user.id).exists()
 
 class Message(models.Model):
     channel = models.ForeignKey(Channel, on_delete=models.CASCADE, related_name="messages")
