@@ -1,0 +1,26 @@
+.Bubble {
+    border-radius: 20px;
+    margin: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    word-wrap: break-word;
+    max-width: 33%;
+}
+
+.sender {
+    background-color: #27496D;
+    border-bottom-right-radius: 0px;
+    align-self: flex-end;
+}
+
+.receiver {
+    background-color: #21303b;
+    border-bottom-left-radius: 0px;
+    align-self: flex-start;
+}
+
+.BubbleText {
+    padding: 10px;
+}
