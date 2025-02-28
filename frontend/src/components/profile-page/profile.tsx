@@ -14,8 +14,8 @@ import "./profile.css";
 const Profile: React.FC = () => {
     const [profilePic, setProfilePic] = useState<string>(defaultPfp);
     const [username, setUsername] = useState<string>("Username");
-    const [role, setRole] = useState<string>("Member"); 
-    const [email, setEmail] = useState<string>("user@example.com");
+    const [role] = useState<string>("Member"); 
+    const [email] = useState<string>("user@example.com");
     const [showFileInput, setShowFileInput] = useState<boolean>(false);
     const [newUsername, setNewUsername] = useState<string>("");
     const [showUsernameInput, setShowUsernameInput] = useState<boolean>(false);
