@@ -93,13 +93,12 @@ def create_channel(request):
 #    return Response({"message": "Channel deleted successfully"}, status=204)
 
 
-#exmaple of delete message
-#@api_view(["DELETE"])
-#@permission_classes([IsAuthenticated])
-#def delete_message(request, message_id):
-#    message = get_object_or_404(Message, id=message_id)
-#    if not message.can_delete(request.user):
-#        return Response({"error": "You do not have permission to delete this message"}, status=403)
-#    
-#    message.delete()
-#    return Response({"message": "Message deleted successfully"}, status=204)
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_message(request, message_id):
+    message = get_object_or_404(Message, id=message_id)
+    if not message.can_delete(request.user):
+        return Response({"error": "You do not have permission to delete this message"}, status=403)
+    
+    message.delete()
+    return Response({"message": "Message deleted successfully"}, status=204)
