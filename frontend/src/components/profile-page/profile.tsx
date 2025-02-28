@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import defaultPfp from "./images/defaultPfp.png";
+import { Link } from "react-router-dom";
+import { ArrowBigLeft } from "lucide-react";
 import "./profile.css";
 
 /* TO DO:
@@ -46,6 +48,7 @@ const Profile: React.FC = () => {
 
     return (
         <div className="profile">
+            
             <div className="profile-container">
                 <div className="profile-box">
                     <h2>{username}</h2>
@@ -73,7 +76,10 @@ const Profile: React.FC = () => {
                         <p><strong>Email:</strong> {email}</p>
                         <button onClick={changePassword} className="change-password">Change Password</button>
                     </div>
+                    <Link to="/settings" className="back-button"> <ArrowBigLeft size={24} className="back-icon" /> <span>Back to Settings</span> </Link>
+                    <Link to="/GroupSidebar" className="back-button"> <ArrowBigLeft size={24} className="back-icon" /> <span>Back to Text Channels</span> </Link>
                 </div>
+                
             </div>
         </div>
     );

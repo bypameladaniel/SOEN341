@@ -6,12 +6,6 @@
 DAE1E7 - light grey
 FFFFFF - white */
 
-/* TO DO:
-    - display actual username, email and role (connect to database, backend)
-    - implement this page in the settings page ("update profile" option)
-    - implement change password option
-    - add username restrictions?
-     */
 .profile {
     background-color: #21303b;
     height: 100vh; /* Full viewport height */
@@ -26,10 +20,10 @@ FFFFFF - white */
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 665px;
-    width: 455px;
+    height: 680px;
+    width: 500px;
     background-color: #B3C8CF;
-    border-radius: 20px; /* Add rounded edges */
+    border-radius: 20px; 
     overflow: hidden; 
 }
 
@@ -168,5 +162,19 @@ FFFFFF - white */
 .change-password:hover {
     background-color: #1b3c5d;
 }
+
+.back-button {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Adds space between icon and text */
+    text-decoration: none;
+    font-size: 16px;
+    color: #1b3c5d;
+    font-weight: bold;
+  }
+  
+  .back-icon {
+    display: inline-block;
+  }
 
 

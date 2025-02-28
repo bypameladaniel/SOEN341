@@ -1,25 +1,18 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import GroupSidebar from "./Sidebar/group-sidebar"; 
 
 const Layout = () => {
   return (
-    <>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/">Authentification</Link>
-          </li>
-          <li>
-            <Link to="/forgotpassword">Forgot Password</Link>
-          </li>
-          <li>
-            <Link to="/resetpassword">Reset Password</Link>
-          </li>
-        </ul>
-      </nav>
+    <div style={{ display: "flex" }}>
+      {/* Sidebar */}
+      <GroupSidebar />
 
-      <Outlet />
-    </>
-  )
+      {/* Main Content */}
+      <div style={{ flexGrow: 1 }}>
+        <Outlet />
+      </div>
+    </div>
+  );
 };
 
 export default Layout;
