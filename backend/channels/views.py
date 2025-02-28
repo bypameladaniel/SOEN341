@@ -37,7 +37,6 @@ def join_channel(request, channel_id):
             return Response({'message': 'User is already a member'}, status=200)
 
         channel.members.add(user)
-        
         serializer = ChannelSerializer(channel, context={"request": request})
 
         return Response({
@@ -64,13 +63,43 @@ def list_messages_in_channel(request, channel_id):
         return JsonResponse({'messages': serializer.data}, status=200)
     else:
         return JsonResponse({"error": "Method not allowed"}, status=405)
-    
+
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def create_channel(request):
+    if not request.user.is_admin():
+        return Response({"error": "Only admins can create channels"}, status=403)
+    
     serializer = ChannelSerializer(data=request.data, context={"request": request})
     if serializer.is_valid():
         channel = serializer.save()
         return Response(ChannelSerializer(channel, context={"request": request}).data, status=201)
     return Response(serializer.errors, status=400)
+
+
+
+
+#example of delete channel (But pamela will do it probably)
+
+#@api_view(["DELETE"])
+#@permission_classes([IsAuthenticated])
+#def delete_channel(request, channel_id):
+#    if not request.user.is_admin():
+#        return Response({"error": "Only admins can delete channels"}, status=403)
+#    
+#    channel = get_object_or_404(Channel, id=channel_id)
+#    channel.delete()
+#    return Response({"message": "Channel deleted successfully"}, status=204)
+
+
+#exmaple of delete message
+#@api_view(["DELETE"])
+#@permission_classes([IsAuthenticated])
+#def delete_message(request, message_id):
+#    message = get_object_or_404(Message, id=message_id)
+#    if not message.can_delete(request.user):
+#        return Response({"error": "You do not have permission to delete this message"}, status=403)
+#    
+#    message.delete()
+#    return Response({"message": "Message deleted successfully"}, status=204)
