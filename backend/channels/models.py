@@ -21,3 +21,6 @@ class Message(models.Model):
     
     def __str__(self):
         return f"{self.user.username}: {self.content[:20]}"
+    
+    def can_delete(self, user):
+        return user.is_admin()
