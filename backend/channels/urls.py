@@ -10,4 +10,7 @@ urlpatterns = [
     path('join/<int:channel_id>/', views.join_channel, name='join-channel'),
     path('<int:channel_id>/messages/', list_messages_in_channel, name='message-list'),
     path('create/', views.create_channel, name='create-channel'),
+    #path('delete/<int:channel_id>/', views.delete_channel, name='delete-channel'),
+    path('message/delete/<int:message_id>/', views.delete_message, name='delete-message'),
 ]
+
