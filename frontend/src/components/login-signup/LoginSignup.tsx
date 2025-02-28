@@ -1,10 +1,10 @@
 import { useState } from "react";
 import "./LoginSignup.css";
 import { User, Mail, KeyRound } from "lucide-react";
-import {Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const LoginSignup = () => {
-  const [action, setAction] = useState("Login");
+  const [action, setAction] = useState<"Login" | "Sign Up">("Login");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -12,7 +12,7 @@ const LoginSignup = () => {
   });
   const [error, setError] = useState("");
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -21,23 +21,16 @@ const LoginSignup = () => {
     setError(""); // Clear error message
   };
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
-    // Make sure all fields are entered.
-    if (
-      !formData.email ||
-      !formData.password ||
-      (action === "Sign Up" && !formData.name)
-    ) {
+    if (!formData.email || !formData.password || (action === "Sign Up" && !formData.name)) {
       setError("All fields are required.");
-      // alert("All fields are required.");
       return;
     }
 
     console.log(`${action} with:`, formData);
-    // call to backend for form handling?
   };
 
   return (
@@ -48,11 +41,9 @@ const LoginSignup = () => {
       </div>
       <form className="form" onSubmit={handleSubmit}>
         <div className="inputs">
-          {action === "Login" ? (
-            <div></div>
-          ) : (
+          {action === "Login" ? null : (
             <div className="input">
-              <User class="login-signup-icons" />
+              <User className="login-signup-icons" />
               <input
                 type="text"
                 name="name"
@@ -63,7 +54,7 @@ const LoginSignup = () => {
             </div>
           )}
           <div className="input">
-            <Mail class="login-signup-icons" />
+            <Mail className="login-signup-icons" />
             <input
               type="email"
               name="email"
@@ -73,7 +64,7 @@ const LoginSignup = () => {
             />
           </div>
           <div className="input">
-            <KeyRound class="login-signup-icons" />
+            <KeyRound className="login-signup-icons" />
             <input
               type="password"
               name="password"
@@ -83,9 +74,7 @@ const LoginSignup = () => {
             />
           </div>
         </div>
-        {action === "Sign Up" ? (
-          <div></div>
-        ) : (
+        {action === "Sign Up" ? null : (
           <div className="forgot-password">
             Lost Password? <span><Link to="/forgotpassword">Click here!</Link></span>
           </div>
@@ -93,23 +82,21 @@ const LoginSignup = () => {
         {error && <div className="error-message">{error}</div>}
         <div className="submit-container">
           <button
-            type="submit"
+            type="button"
             className={action === "Login" ? "submitgray" : "submit"}
             onClick={() => {
-              if (action === "Login") 
-                handleReset();
-                setAction("Sign Up");
+              handleReset();
+              setAction("Sign Up");
             }}
           >
             Sign Up
           </button>
           <button
-            type="submit"
+            type="button"
             className={action === "Sign Up" ? "submitgray" : "submit"}
             onClick={() => {
-              if (action === "Sign Up") 
-                handleReset();
-                setAction("Login");
+              handleReset();
+              setAction("Login");
             }}
           >
             Login
