@@ -58,8 +58,11 @@ const Settings = () => {
       </div>
 
         
-        <button className="save-button">Save Changes</button>
-        <Link to="/GroupSidebar" className="back-button"> <ArrowBigLeft size={24} className="back-icon" /> <span>Back to Text Channels</span> </Link>
+      <button className="save-button">Save Changes</button>
+      <Link to="/app/groupsidebar" className="back-button">
+        <ArrowBigLeft size={24} className="back-icon" />
+        <span>Back to Text Channels</span>
+      </Link>
       </div>
     </div>
   );

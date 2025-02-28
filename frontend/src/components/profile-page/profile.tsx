@@ -4,18 +4,12 @@ import { Link } from "react-router-dom";
 import { ArrowBigLeft } from "lucide-react";
 import "./profile.css";
 
-/* TO DO:
-    - display actual username, email and role (implement setRole and setEmail)
-    - implement this page in the settings page ("update profile" option)
-    - implement change password option 
-    - connect username change to database
-     */
 
 const Profile: React.FC = () => {
     const [profilePic, setProfilePic] = useState<string>(defaultPfp);
     const [username, setUsername] = useState<string>("Username");
-    const [role] = useState<string>("Member"); 
-    const [email] = useState<string>("user@example.com");
+    const [role] = useState<string>("Member"); //add setRole function
+    const [email] = useState<string>("user@example.com"); //add setEmail function
     const [showFileInput, setShowFileInput] = useState<boolean>(false);
     const [newUsername, setNewUsername] = useState<string>("");
     const [showUsernameInput, setShowUsernameInput] = useState<boolean>(false);
@@ -30,10 +24,6 @@ const Profile: React.FC = () => {
 
     const removeProfilePic = () => {
         setProfilePic(defaultPfp);
-    };
-
-    const changePassword = () => {
-        alert("Redirecting to password change page...");
     };
 
     const updateUsername = () => {
@@ -74,10 +64,11 @@ const Profile: React.FC = () => {
                     <div className="profile-details">
                         <p><strong>Role:</strong> {role}</p>
                         <p><strong>Email:</strong> {email}</p>
-                        <button onClick={changePassword} className="change-password">Change Password</button>
+                        
                     </div>
                     <Link to="/settings" className="back-button"> <ArrowBigLeft size={24} className="back-icon" /> <span>Back to Settings</span> </Link>
-                    <Link to="/GroupSidebar" className="back-button"> <ArrowBigLeft size={24} className="back-icon" /> <span>Back to Text Channels</span> </Link>
+                    <Link to="/app/groupsidebar" className="back-button"> <ArrowBigLeft size={24} className="back-icon" /><span>Back to Text Channels</span></Link>
+
                 </div>
                 
             </div>

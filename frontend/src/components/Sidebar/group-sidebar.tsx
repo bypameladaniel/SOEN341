@@ -57,7 +57,7 @@ const GroupSidebar = () => {
     <nav className="sidebar">
       <ul className="sidebar-list">
         <li className="sidebar-item">
-          <Link to="/DirectSidebar" className="sidebar-link">
+          <Link to="/app/DirectSidebar" className="sidebar-link">
             Direct Messages <Inbox size={24} />
           </Link>
         </li>

@@ -1,30 +1,24 @@
-import { Outlet } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 
 const Layout = () => {
-  const [showSidebarLink, setShowSidebarLink] = useState(true);
-
-  const handleSidebarClick = () => {
-    setShowSidebarLink(false);
-  };
+  const location = useLocation();
+  const isSidebarPage = location.pathname.includes("groupsidebar") || location.pathname.includes("directsidebar");
 
   return (
     <div style={{ display: "flex" }}>
-      {/* Show the link only if it hasn't been clicked */}
-      {showSidebarLink && (
-        <Link to="/GroupSidebar" onClick={handleSidebarClick}>
-          To sidebar
-        </Link>
-      )}
-
+      {/* Show Sidebar only on group/direct pages */}
+      {isSidebarPage && <Outlet />}
+      
       {/* Main Content */}
-      <div style={{ flexGrow: 1 }}>
-        <Outlet />
-      </div>
+      {!isSidebarPage && (
+        <div style={{ flexGrow: 1 }}>
+          <Outlet />
+        </div>
+      )}
     </div>
   );
 };
 
 export default Layout;
+
 
