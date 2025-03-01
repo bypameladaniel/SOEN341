@@ -66,18 +66,25 @@ const Profile: React.FC = () => {
 
     const removeProfilePic = async () => {
         try {
+            const formData = new FormData();
+            formData.append("profile_picture", ""); // Send an empty value to clear the field
+    
             const response = await fetch("http://127.0.0.1:8000/app/user/modify/", {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("access")}`,
-                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ profile_picture: null }),
+                body: formData,
             });
+    
+            console.log("Remove Profile Picture Response:", response); // Debugging
+    
             if (response.ok) {
-                setProfilePic(defaultPfp);
+                const data = await response.json();
+                setProfilePic(defaultPfp); // Reset the profile picture to default
             } else {
-                console.error("Failed to remove profile picture:", response.statusText);
+                const errorText = await response.text(); // Log the response text
+                console.error("Failed to remove profile picture:", errorText);
             }
         } catch (error) {
             console.error("Failed to remove profile picture:", error);
