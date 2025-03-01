@@ -1,12 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import GroupSidebar from "./components/Sidebar/group-sidebar";
 import DirectSidebar from "./components/Sidebar/DM-sidebar";
-//import LoginSignup from "./components/login-signup/LoginSignup";
 import Profile from "./components/profile-page/profile";
 import Settings from "./components/settings-page/settings";
 import HomePage from "./components/home-page/Home";
 //import MessagingArea from "./components/messaging/";
-import Layout from "./components/layout";
+import Layout from "./layout";
 import { useState } from "react";
 
 const App = () => {
