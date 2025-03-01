@@ -1,16 +1,16 @@
 import { useState, FormEvent } from "react";
-import { useNavigate} from "react-router-dom";
-import api from "../api";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../token";
-import "../styles/LoginSignup.css";
+import { useNavigate } from "react-router-dom";
+import api from "../../api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../token";
 import { Mail, User, KeyRound } from "lucide-react";
-import './AuthForm.css'
+import "./AuthForm.css";
 
 interface AuthFormProps {
   method: "Login" | "Sign Up";
+  isAuthenticated: boolean;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ method }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ method, isAuthenticated }) => {
   const [action, setAction] = useState<"Login" | "Sign Up">(
     method === "Login" ? "Login" : "Sign Up"
   );
@@ -35,32 +35,46 @@ const AuthForm: React.FC<AuthFormProps> = ({ method }) => {
     }
 
     try {
-      let route = action === "Login" ? "http://localhost:8000/app/token/" : "http://localhost:8000/app/user/register/";
-      const res = await api.post(route, { username: username, password: password });
+      const route =
+        action === "Login"
+          ? "http://127.0.0.1:8000/app/token/"
+          : "http://127.0.0.1:8000/app/user/register/";
+      const res = await api.post(route, {
+        username: username,
+        password: password,
+      });
 
       if (action === "Login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-        navigate("/");
+        isAuthenticated = true;
+        console.log("hello");
+        navigate("/app/groupsidebar");
         window.location.reload();
       } else {
         setSuccess("Registration successful. Please login.");
         setAction("Login");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      if (error.response) {
-        if (error.response.status === 401) {
-          setError("Invalid credentials");
-        } else if (error.response.status === 400) {
-          setError("Username already exists");
+
+      if (error instanceof Error) {
+        if ((error as any).response) {
+          const response = (error as any).response;
+          if (response.status === 401) {
+            setError("Invalid credentials");
+          } else if (response.status === 400) {
+            setError("Username already exists");
+          } else {
+            setError("Something went wrong. Please try again.");
+          }
+        } else if ((error as any).request) {
+          setError("Network error. Please check your internet connection.");
         } else {
-          setError("Something went wrong. Please try again.");
+          setError(error.message || "Something went wrong. Please try again.");
         }
-      } else if (error.request) {
-        setError("Network error. Please check your internet connection.");
       } else {
-        setError("Something went wrong. Please try again.");
+        setError("An unknown error occurred.");
       }
     } finally {
       setLoading(false);

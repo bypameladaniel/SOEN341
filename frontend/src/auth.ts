@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";    
 import {jwtDecode} from 'jwt-decode';
-import api from "./api";
+import api from "./api.ts";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "./token.ts";
 
 interface DecodedToken {
