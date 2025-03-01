@@ -79,19 +79,15 @@ def create_channel(request):
     return Response(serializer.errors, status=400)
 
 
-
-
-#example of delete channel (But pamela will do it probably)
-
-#@api_view(["DELETE"])
-#@permission_classes([IsAuthenticated])
-#def delete_channel(request, channel_id):
-#    if not request.user.is_admin():
-#        return Response({"error": "Only admins can delete channels"}, status=403)
-#    
-#    channel = get_object_or_404(Channel, id=channel_id)
-#    channel.delete()
-#    return Response({"message": "Channel deleted successfully"}, status=204)
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_channel(request, channel_id):
+    if not request.user.is_admin():
+        return Response({"error": "Only admins can delete channels"}, status=403)
+    
+    channel = get_object_or_404(Channel, id=channel_id)
+    channel.delete()
+    return Response({"message": "Channel deleted successfully"}, status=204)
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
