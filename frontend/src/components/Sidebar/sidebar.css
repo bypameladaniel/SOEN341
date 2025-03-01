@@ -9,9 +9,12 @@
 }
 
 .sidebar-list {
+    list-style: none;
     padding: 0;
     margin: 0;
     flex-grow: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
 }
 
 .sidebar-item {
@@ -38,6 +41,5 @@
     border-top: 1px solid #556068;
     padding-top: 1rem;
     list-style: none;
+    margin-top: auto;
 }
-
-

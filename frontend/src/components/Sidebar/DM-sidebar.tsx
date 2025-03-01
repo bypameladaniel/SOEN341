@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { MessageCircle, Settings, User, UsersRound } from "lucide-react";
-import "./DM-sidebar.css";
+import "./sidebar.css";
 import logout from "../authentication/logout";
 
 // Define a type for conversations
