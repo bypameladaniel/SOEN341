@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from .models import Channel, Message
 from .serializers import MessageSerializer
 from .serializers import ChannelSerializer
+from rest_framework import status
 
 
 @api_view(["GET"])
@@ -90,8 +91,18 @@ def delete_channel(request, channel_id):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def add_message(request):
-    pass
+def add_message(request, channel_id):
+
+    channel = get_object_or_404(Channel, id=channel_id)
+
+    serializer = MessageSerializer(data=request.data, context={"request": request})
+        
+    if serializer.is_valid():
+        serializer.save(user=request.user, channel=channel)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
