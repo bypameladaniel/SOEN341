@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { MessageCircle, Settings, User, Inbox } from "lucide-react";
 import "./group-sidebar.css";
+import logout from "../logout";
 
 // Define a type for channels
 interface Channel {
@@ -14,11 +15,17 @@ const GroupSidebar = () => {
   const [channels, setChannels] = useState<Channel[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const handleLogout = async () => {
+    await logout();
+    <Navigate to="/"></Navigate>
+    window.location.reload(); // Refresh the page
+  };
+
   // Fetch channels from Django backend
   useEffect(() => {
     const fetchChannels = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/channels/"); // Adjust endpoint as needed
+        const response = await fetch("http://127.0.0.1:8000/api/channels/"); // Adjust endpoint as needed
         if (!response.ok) {
           throw new Error("Failed to fetch channels");
         }
@@ -36,7 +43,7 @@ const GroupSidebar = () => {
   // Function to add a new group channel
   const addChannel = async (channelName: string) => {
     try {
-      const response = await fetch("http://localhost:8000/api/channels/", {
+      const response = await fetch("http://127.0.0.1:8000/api/channels/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -88,6 +95,13 @@ const GroupSidebar = () => {
         <li className="sidebar-item">
           <Link to="/profile" className="sidebar-link">
             <User size={24} /> Profile
+          </Link>
+        </li>
+        <li>
+          <Link to="/" className="logout-button">
+            <button onClick={handleLogout}>
+              Log Out
+            </button>
           </Link>
         </li>
       </ul>

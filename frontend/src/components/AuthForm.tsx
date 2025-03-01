@@ -1,16 +1,17 @@
 import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../authentication/api";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../authentication/token";
+import api from "../api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../token";
 import "../styles/LoginSignup.css";
 import { Mail, User, KeyRound } from "lucide-react";
 import "./AuthForm.css";
 
 interface AuthFormProps {
   method: "Login" | "Sign Up";
+  isAuthenticated: boolean;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ method }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ method, isAuthenticated}) => {
   const [action, setAction] = useState<"Login" | "Sign Up">(
     method === "Login" ? "Login" : "Sign Up"
   );
@@ -37,8 +38,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ method }) => {
     try {
       const route =
         action === "Login"
-          ? "http://localhost:8000/app/token/"
-          : "http://localhost:8000/app/user/register/";
+          ? "http://127.0.0.1:8000/app/token/"
+          : "http://127.0.0.1:8000/app/user/register/";
       const res = await api.post(route, {
         username: username,
         password: password,
@@ -47,8 +48,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ method }) => {
       if (action === "Login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-        navigate("/");
-        window.location.reload();
+        isAuthenticated = true;
+        console.log("hello");
+        navigate("/app/groupsidebar");
+        // window.location.reload();
       } else {
         setSuccess("Registration successful. Please login.");
         setAction("Login");

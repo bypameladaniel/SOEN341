@@ -1,5 +1,5 @@
-import api from "../authentication/api";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../authentication/token";
+import api from "../api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../token";
 
 const logout = async () => {
   try {

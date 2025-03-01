@@ -1,18 +1,16 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { MessageSquare, Users, Shield, LogIn, UserPlus } from "lucide-react";
 import "./Home.css";
 
-const HomePage: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
+const HomePage = () => {
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
-    onLogin();
-    navigate("/app/login");
+    navigate("/login");
   };
 
   const handleSignupClick = () => {
-    navigate("/app/signup")
+    navigate("/signup")
   };
 
   return (

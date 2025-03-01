@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useAuthentication } from "../authentication/auth";
+import { useAuthentication } from "../auth";
 import { ReactNode } from "react";
 
 interface ProtectedRouteProps {
@@ -15,9 +15,10 @@ function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (
     isAuthorized &&
-    (window.location.pathname === "/login" || window.location.pathname === "/signup")
+    (window.location.pathname === "/login" ||
+      window.location.pathname === "/signup")
   ) {
-    return <Navigate to="/" />;
+    return <Navigate to="/app/groupsidebar" />;
   }
 
   return <>{children}</>;
