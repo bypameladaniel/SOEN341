@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { MessageCircle, Settings, User, UsersRound } from "lucide-react";
 import "./sidebar.css";
+import logout from "../authentication/logout";
 
 // Define a type for conversations
 interface Conversation {
@@ -13,6 +14,12 @@ const DirectSidebar = () => {
   // State for direct message conversations
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const handleLogout = async () => {
+    await logout();
+    <Navigate to="/"></Navigate>
+    window.location.reload(); // Refresh the page
+  };
 
   // Fetch conversations from Django backend
   useEffect(() => {
@@ -57,7 +64,7 @@ const DirectSidebar = () => {
     <nav className="sidebar">
       <ul className="sidebar-list">
         <li className="sidebar-item">
-          <Link to="/app/GroupSidebar" className="sidebar-link">
+          <Link to="/app/groupsidebar" className="sidebar-link">
             Channels <UsersRound size={24} />
           </Link>
         </li>
@@ -88,6 +95,13 @@ const DirectSidebar = () => {
         <li className="sidebar-item">
           <Link to="/profile" className="sidebar-link">
             <User size={24} /> Profile 
+          </Link>
+        </li>
+        <li>
+          <Link to="/" className="logout-button">
+            <button onClick={handleLogout}>
+              Log Out
+            </button>
           </Link>
         </li>
       </ul>

@@ -1,24 +1,22 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { MessageSquare, Users, Shield, LogIn, UserPlus } from "lucide-react";
 import "./Home.css";
 
-const HomePage: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
+const HomePage = () => {
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
-    onLogin();
-    navigate("/app/groupsidebar");
+    navigate("/login");
   };
 
   const handleSignupClick = () => {
-    console.log("Sign Up button clicked");
+    navigate("/signup")
   };
 
   return (
     <div className="home">
     <div className="home-container">
-      <header className="home-header">Welcome to "Application Name TBD"</header>
+      <header className="home-header">Welcome to UK - X 1 Communication App</header>
       <main className="home-main">
         <h1 className="home-title">Connect with Friends, Anytime!</h1>
         <p className="home-description">
