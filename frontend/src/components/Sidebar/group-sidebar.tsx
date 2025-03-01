@@ -76,6 +76,19 @@ const GroupSidebar = () => {
     }
   };
 
+  const joinChannel = async (channelId: number) => {
+  try {
+    const response = await api.get("http://localhost:8000/app/auth/user/");
+
+    await api.post(`http://localhost:8000/api/channels/join/${channelId}/`, {
+      user: response.data.username
+    });
+
+  } catch (error: any) {
+    console.error("failed to join channel:", error);
+  }
+};
+
   return (
     <nav className="sidebar">
       <ul className="sidebar-list">
@@ -90,7 +103,7 @@ const GroupSidebar = () => {
         ) : (
           channels.map((channel) => (
             <li key={channel.id} className="sidebar-item">
-              <Link to={`/channels/${channel.id}`} className="sidebar-link" onClick={() => {localStorage.setItem('selectedChannelId', channel.id.toString())}}>
+              <Link to={`/channels/${channel.id}`} className="sidebar-link" onClick={() => {localStorage.setItem('selectedChannelId', channel.id.toString()); joinChannel(channel.id);}}>
                 <MessageCircle size={20} /> {channel.name}
               </Link>
             </li>
