@@ -1,18 +1,19 @@
 import React, { useState } from "react";
 import defaultPfp from "./images/defaultPfp.png";
 import { Link } from "react-router-dom";
-import { ArrowBigLeft } from "lucide-react";
+import { ArrowBigLeft, PencilLine } from "lucide-react";
 import "./profile.css";
 
 
 const Profile: React.FC = () => {
-    const [profilePic, setProfilePic] = useState<string>(defaultPfp);
-    const [username, setUsername] = useState<string>("Username");
-    const [role] = useState<string>("Member"); //add setRole function
-    const [email] = useState<string>("user@example.com"); //add setEmail function
+    const [profilePic, setProfilePic] = useState<string>(defaultPfp); //need to fetch from backend
+    const [username, setUsername] = useState<string>("Username"); //need to fetch from backend
+    const [role] = useState<string>("Member"); //add setRole function AND need to fetch from backend
+    const [email] = useState<string>("user@example.com"); //add setEmail function AND need to fetch from backend
     const [showFileInput, setShowFileInput] = useState<boolean>(false);
     const [newUsername, setNewUsername] = useState<string>("");
     const [showUsernameInput, setShowUsernameInput] = useState<boolean>(false);
+    const [loading, setLoading] = useState(false);
 
     const changeProfilePic = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
@@ -21,6 +22,28 @@ const Profile: React.FC = () => {
             setProfilePic(imageUrl);
         }
     };
+    const changeRole = async () => {
+        console.log("change role");
+        // const newRole = role === "member" ? "admin" : "member";
+        setLoading(true);
+        // try {
+        //   const response = await api.post("http://127.0.0.1:8000/api/update-role/", {
+        //     role: newRole,
+        //   });
+    
+        //   if (response.status === 200) {
+        //     setRole(newRole);
+        //   }
+        // } catch (error) {
+        //   console.error("Error updating role:", error);
+        // } finally {
+        //   setLoading(false);
+        // }
+    }
+    
+    const changeEmail =() => {
+        console.log("change email");
+    }
 
     const removeProfilePic = () => {
         setProfilePic(defaultPfp);
@@ -62,8 +85,14 @@ const Profile: React.FC = () => {
                         <button onClick={removeProfilePic} className="remove-pfp">Remove Profile Picture</button>
                     </div>
                     <div className="profile-details">
-                        <p><strong>Role:</strong> {role}</p>
-                        <p><strong>Email:</strong> {email}</p>
+                        <div className="profile-item">
+                            <p><strong>Role:</strong> {role}</p> 
+                            <button onClick={changeRole} className="edit-button"><PencilLine className="edit-icon"/></button>
+                        </div>
+                        <div className="profile-item">
+                            <p><strong>Email:</strong> {email}</p> 
+                            <button onClick={changeEmail} className="edit-button"><PencilLine className="edit-icon"/></button>
+                        </div>
                         
                     </div>
                     <Link to="/settings" className="back-button"> <ArrowBigLeft size={24} className="back-icon" /> <span>Back to Settings</span> </Link>

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { MessageCircle, Settings, User, Inbox } from "lucide-react";
 import "./group-sidebar.css";
+import logout from "../authentication/logout";
 
 // Define a type for channels
 interface Channel {
@@ -13,12 +14,19 @@ const GroupSidebar = () => {
   // State for group channels
   const [channels, setChannels] = useState<Channel[]>([]);
   const [loading, setLoading] = useState(true);
+  const [role] = useState<string>("member"); // Default to "member"
+
+  const handleLogout = async () => {
+    await logout();
+    <Navigate to="/"></Navigate>
+    window.location.reload(); // Refresh the page
+  };
 
   // Fetch channels from Django backend
   useEffect(() => {
     const fetchChannels = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/channels/"); // Adjust endpoint as needed
+        const response = await fetch("http://127.0.0.1:8000/api/channels/"); // Adjust endpoint as needed
         if (!response.ok) {
           throw new Error("Failed to fetch channels");
         }
@@ -30,13 +38,30 @@ const GroupSidebar = () => {
         setLoading(false);
       }
     };
+    // const fetchUserRole = async () => {
+    //   try {
+    //     const response = await fetch("http://127.0.0.1:8000/api/user-role/");
+    //     if (!response.ok) {
+    //       throw new Error("Failed to fetch user role");
+    //     }
+
+    //     const data = await response.json();
+    //     setRole(data.role); // does API return { "role": "admin" } or smtg else?
+    //   } catch (error) {
+    //     console.error("Error fetching user role:", error);
+    //   } finally {
+    //      setLoading(false);
+    //   }
+    // };
+
     fetchChannels();
+    // fetchUserRole();
   }, []);
 
   // Function to add a new group channel
   const addChannel = async (channelName: string) => {
     try {
-      const response = await fetch("http://localhost:8000/api/channels/", {
+      const response = await fetch("http://127.0.0.1:8000/api/channels/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,9 +100,11 @@ const GroupSidebar = () => {
         )}
       </ul>
 
-      <button onClick={() => addChannel(`New Channel ${channels.length + 1}`)} className="add-channel-btn">
-        ➕ Add Channel
-      </button>
+      {role === "admin" && (
+        <button onClick={() => addChannel(`New Channel ${channels.length + 1}`)} className="add-channel-btn">
+          ➕ Add Channel
+        </button>
+      )}
 
       <ul className="sidebar-bottom">
         <li className="sidebar-item">
@@ -88,6 +115,13 @@ const GroupSidebar = () => {
         <li className="sidebar-item">
           <Link to="/profile" className="sidebar-link">
             <User size={24} /> Profile
+          </Link>
+        </li>
+        <li>
+          <Link to="/" className="logout-button">
+            <button onClick={handleLogout}>
+              Log Out
+            </button>
           </Link>
         </li>
       </ul>
