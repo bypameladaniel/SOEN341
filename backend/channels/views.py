@@ -92,6 +92,10 @@ def create_channel(request):
 #    channel.delete()
 #    return Response({"message": "Channel deleted successfully"}, status=204)
 
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def add_message(request):
+    pass
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
