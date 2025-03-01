@@ -30,4 +30,4 @@ class UserSerializer(serializers.ModelSerializer):
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'profile_picture']
+        fields = ['username', 'profile_picture','email', 'role']
