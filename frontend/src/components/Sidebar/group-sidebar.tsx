@@ -3,6 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { MessageCircle, Settings, User, Inbox } from "lucide-react";
 import "./sidebar.css";
 import logout from "../authentication/logout";
+import api from "../../api";
 
 // Define a type for channels
 interface Channel {
@@ -26,13 +27,10 @@ const GroupSidebar = () => {
   useEffect(() => {
     const fetchChannels = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/channels/"); // Adjust endpoint as needed
-        if (!response.ok) {
-          throw new Error("Failed to fetch channels");
-        }
-        const data: Channel[] = await response.json();
-        setChannels(data);
-      } catch (error) {
+        const response = await api.get("http://127.0.0.1:8000/api/channels/channel-list/"); // Adjust endpoint as needed
+
+        setChannels(response.data);
+      } catch (error: any) {
         console.error("Error fetching channels:", error);
       } finally {
         setLoading(false);
@@ -92,7 +90,7 @@ const GroupSidebar = () => {
         ) : (
           channels.map((channel) => (
             <li key={channel.id} className="sidebar-item">
-              <Link to={`/channels/${channel.id}`} className="sidebar-link">
+              <Link to={`/channels/${channel.id}`} className="sidebar-link" onClick={() => {localStorage.setItem('selectedChannelId', channel.id.toString())}}>
                 <MessageCircle size={20} /> {channel.name}
               </Link>
             </li>
