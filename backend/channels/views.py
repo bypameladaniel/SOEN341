@@ -96,21 +96,26 @@ def create_channel(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def add_message(request):
-
-    channel_id = request.data.get("channel")
-    channel = get_object_or_404(Channel, id=channel_id)
-
-    if request.user not in channel.members.all():
-        return Response({'error': 'You are not a member of this channel'}, status=403)
-
-    serializer = MessageSerializer(data=request.data, context={"request": request})
+    try:
+        channel_id = request.data.get("channel")
+        if not channel_id:
+            return Response({"error": "Channel ID is required"}, status=400)
         
-    if serializer.is_valid():
-        serializer.save(user=request.user, channel=channel)
-        return Response(serializer.data, status=201)
-        
-    return Response(serializer.errors, status=400)
+        channel = get_object_or_404(Channel, id=channel_id)
 
+        if request.user not in channel.members.all():
+            return Response({'error': 'You are not a member of this channel'}, status=403)
+
+        serializer = MessageSerializer(data=request.data, context={"request": request})
+        
+        if serializer.is_valid():
+            serializer.save(user=request.user, channel=channel)
+            return Response(serializer.data, status=201)
+        
+        return Response(serializer.errors, status=400)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
