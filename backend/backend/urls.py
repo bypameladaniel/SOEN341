@@ -14,6 +14,7 @@ urlpatterns = [
     path("app/auth/user/",UserDetailView.as_view(), name = "user_detail"),
     path("",include('app.urls')),
     path("api/channels/", include('channels.urls')),
+    path('app/user/modify/', ModifyUserView.as_view(), name='modify_user'),
 ]
 
 # Serve media files in development

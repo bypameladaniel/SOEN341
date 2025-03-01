@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from .serializers import UserSerializer
+from .serializers import UserUpdateSerializer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.views.generic import TemplateView
@@ -46,6 +47,17 @@ class UserDetailView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+class ModifyUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+        serializer = UserUpdateSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
         
 class LogoutView(APIView):
