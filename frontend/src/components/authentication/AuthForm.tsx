@@ -1,8 +1,7 @@
 import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../token";
-import "../styles/LoginSignup.css";
+import api from "../../api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../token";
 import { Mail, User, KeyRound } from "lucide-react";
 import "./AuthForm.css";
 
@@ -11,7 +10,7 @@ interface AuthFormProps {
   isAuthenticated: boolean;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ method, isAuthenticated}) => {
+const AuthForm: React.FC<AuthFormProps> = ({ method, isAuthenticated }) => {
   const [action, setAction] = useState<"Login" | "Sign Up">(
     method === "Login" ? "Login" : "Sign Up"
   );
@@ -51,7 +50,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ method, isAuthenticated}) => {
         isAuthenticated = true;
         console.log("hello");
         navigate("/app/groupsidebar");
-        // window.location.reload();
+        window.location.reload();
       } else {
         setSuccess("Registration successful. Please login.");
         setAction("Login");

@@ -7,7 +7,7 @@ import HomePage from "./components/home-page/Home";
 //import MessagingArea from "./components/messaging/";
 import Layout from "./layout";
 // import { useState } from "react";
-import AuthForm from "./components/AuthForm";
+import AuthForm from "./components/authentication/AuthForm";
 
 const App = () => {
   const isAuthenticated = !localStorage.getItem("ACCESS_TOKEN");
