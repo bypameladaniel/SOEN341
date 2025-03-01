@@ -19,6 +19,7 @@ import json
 from django.contrib.auth import update_session_auth_hash
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 
 #@api_view(['GET'])
 #def api_example(request):
@@ -54,6 +55,19 @@ class ModifyUserView(APIView):
     def put(self, request):
         user = request.user
         serializer = UserUpdateSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ModifyUserView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]  # Add JSONParser
+
+    def put(self, request):
+        user = request.user
+        serializer = UserUpdateSerializer(user, data=request.data, partial=True)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
