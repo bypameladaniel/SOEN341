@@ -103,7 +103,7 @@ const GroupSidebar = () => {
         ) : (
           channels.map((channel) => (
             <li key={channel.id} className="sidebar-item">
-              <Link to={`/channels/${channel.id}`} className="sidebar-link" onClick={() => {localStorage.setItem('selectedChannelId', channel.id.toString()); joinChannel(channel.id);}}>
+              <Link to={`/channels/${channel.id}`} className="sidebar-link" onClick={() => { joinChannel(channel.id);}}>
                 <MessageCircle size={20} /> {channel.name}
               </Link>
             </li>
