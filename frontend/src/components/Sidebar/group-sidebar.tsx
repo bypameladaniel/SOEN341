@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MessageCircle, Settings, User, Inbox } from "lucide-react";
-import "./group-sidebar.css";
+import "./sidebar.css";
 
 // Define a type for channels
 interface Channel {
