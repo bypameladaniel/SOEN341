@@ -1,29 +1,47 @@
 import { BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
-import {useAuthentication} from "./auth.ts";
-// import { Home } from "lucide-react";
-import Layout from "./components/layout.tsx";
-import NotFound from "./pages/NotFound";
-import AuthForm from "./components/AuthForm.tsx";
+import GroupSidebar from "./components/Sidebar/group-sidebar";
+import DirectSidebar from "./components/Sidebar/DM-sidebar";
+import Profile from "./components/profile-page/profile";
+import Settings from "./components/settings-page/settings";
+import HomePage from "./components/home-page/Home";
+//import MessagingArea from "./components/messaging/";
+import Layout from "./layout";
+import { useState } from "react";
 
 const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
 
   return (
-    <div>
-      <BrowserRouter>
-      {/*insert sidebar here? */}
+    <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout/>}>
-          
-          <Route path="authentication" element={<AuthForm method="Sign Up"></AuthForm>}></Route>
-          <Route path="*" element={<NotFound/>}/>
-        </Route>
+        {/* Home Page is the first thing displayed */}
+        <Route path="/" element={<HomePage onLogin={handleLogin} />} />
+
+        {/* Protected Routes */}
+        {isAuthenticated && (
+          <>
+            {/* Redirect to GroupSidebar after login */}
+            <Route path="/app" element={<Navigate to="/app/groupsidebar" replace />} />
+
+            {/* Main Layout for sidebar pages */}
+            <Route path="/app" element={<Layout />}>
+              <Route path="groupsidebar" element={<GroupSidebar />} />
+              <Route path="directsidebar" element={<DirectSidebar />} />
+            </Route>
+
+            {/* Settings and Profile as separate pages */}
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/profile" element={<Profile />} />
+          </>
+        )}
       </Routes>
-      </BrowserRouter>
-    </div>
+    </BrowserRouter>
+  );
+};
 
-  )
-}
+export default App;
 
-// const root = ReactDOM.createRoot(document.getElementById('root'));
-// root.render(<App/>);
-export default App
