@@ -14,6 +14,7 @@ const GroupSidebar = () => {
   // State for group channels
   const [channels, setChannels] = useState<Channel[]>([]);
   const [loading, setLoading] = useState(true);
+  const [role] = useState<string>("member"); // Default to "member"
 
   const handleLogout = async () => {
     await logout();
@@ -37,7 +38,24 @@ const GroupSidebar = () => {
         setLoading(false);
       }
     };
+    // const fetchUserRole = async () => {
+    //   try {
+    //     const response = await fetch("http://127.0.0.1:8000/api/user-role/");
+    //     if (!response.ok) {
+    //       throw new Error("Failed to fetch user role");
+    //     }
+
+    //     const data = await response.json();
+    //     setRole(data.role); // does API return { "role": "admin" } or smtg else?
+    //   } catch (error) {
+    //     console.error("Error fetching user role:", error);
+    //   } finally {
+    //      setLoading(false);
+    //   }
+    // };
+
     fetchChannels();
+    // fetchUserRole();
   }, []);
 
   // Function to add a new group channel
@@ -82,9 +100,11 @@ const GroupSidebar = () => {
         )}
       </ul>
 
-      <button onClick={() => addChannel(`New Channel ${channels.length + 1}`)} className="add-channel-btn">
-        ➕ Add Channel
-      </button>
+      {role === "admin" && (
+        <button onClick={() => addChannel(`New Channel ${channels.length + 1}`)} className="add-channel-btn">
+          ➕ Add Channel
+        </button>
+      )}
 
       <ul className="sidebar-bottom">
         <li className="sidebar-item">
