@@ -7,6 +7,7 @@ import HomePage from "./components/home-page/Home";
 //import MessagingArea from "./components/messaging/";
 import Layout from "./layout";
 import { useState } from "react";
+import AuthForm from "./components/AuthForm";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -25,12 +26,14 @@ const App = () => {
         {isAuthenticated && (
           <>
             {/* Redirect to GroupSidebar after login */}
-            <Route path="/app" element={<Navigate to="/app/groupsidebar" replace />} />
+            <Route path="/app" element={<Navigate to="/app/login" replace />} />
 
             {/* Main Layout for sidebar pages */}
             <Route path="/app" element={<Layout />}>
               <Route path="groupsidebar" element={<GroupSidebar />} />
               <Route path="directsidebar" element={<DirectSidebar />} />
+              <Route path="login" element={<AuthForm method={"Login"} />} />
+              <Route path="signup" element={<AuthForm method={"Sign Up"} />} />
             </Route>
 
             {/* Settings and Profile as separate pages */}

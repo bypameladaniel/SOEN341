@@ -1,10 +1,10 @@
 import { useState, FormEvent } from "react";
-import { useNavigate} from "react-router-dom";
-import api from "../api";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../token";
+import { useNavigate } from "react-router-dom";
+import api from "../authentication/api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../authentication/token";
 import "../styles/LoginSignup.css";
 import { Mail, User, KeyRound } from "lucide-react";
-import './AuthForm.css'
+import "./AuthForm.css";
 
 interface AuthFormProps {
   method: "Login" | "Sign Up";
@@ -35,8 +35,14 @@ const AuthForm: React.FC<AuthFormProps> = ({ method }) => {
     }
 
     try {
-      let route = action === "Login" ? "http://localhost:8000/app/token/" : "http://localhost:8000/app/user/register/";
-      const res = await api.post(route, { username: username, password: password });
+      const route =
+        action === "Login"
+          ? "http://localhost:8000/app/token/"
+          : "http://localhost:8000/app/user/register/";
+      const res = await api.post(route, {
+        username: username,
+        password: password,
+      });
 
       if (action === "Login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
@@ -47,20 +53,26 @@ const AuthForm: React.FC<AuthFormProps> = ({ method }) => {
         setSuccess("Registration successful. Please login.");
         setAction("Login");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      if (error.response) {
-        if (error.response.status === 401) {
-          setError("Invalid credentials");
-        } else if (error.response.status === 400) {
-          setError("Username already exists");
+
+      if (error instanceof Error) {
+        if ((error as any).response) {
+          const response = (error as any).response;
+          if (response.status === 401) {
+            setError("Invalid credentials");
+          } else if (response.status === 400) {
+            setError("Username already exists");
+          } else {
+            setError("Something went wrong. Please try again.");
+          }
+        } else if ((error as any).request) {
+          setError("Network error. Please check your internet connection.");
         } else {
-          setError("Something went wrong. Please try again.");
+          setError(error.message || "Something went wrong. Please try again.");
         }
-      } else if (error.request) {
-        setError("Network error. Please check your internet connection.");
       } else {
-        setError("Something went wrong. Please try again.");
+        setError("An unknown error occurred.");
       }
     } finally {
       setLoading(false);

@@ -8,11 +8,11 @@ const HomePage: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
 
   const handleLoginClick = () => {
     onLogin();
-    navigate("/app/groupsidebar");
+    navigate("/app/login");
   };
 
   const handleSignupClick = () => {
-    console.log("Sign Up button clicked");
+    navigate("/app/signup")
   };
 
   return (
