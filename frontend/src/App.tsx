@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
-import GroupSidebar from "./components/Sidebar/group-sidebar";
+import GroupChat from "./components/chat-page/GroupChat";
 import DirectSidebar from "./components/Sidebar/DM-sidebar";
 import Profile from "./components/profile-page/profile";
 import Settings from "./components/settings-page/settings";
@@ -8,6 +8,7 @@ import HomePage from "./components/home-page/Home";
 import Layout from "./layout";
 // import { useState } from "react";
 import AuthForm from "./components/authentication/AuthForm";
+import GroupSidebar from "./components/Sidebar/group-sidebar";
 
 const App = () => {
   const isAuthenticated = !localStorage.getItem("ACCESS_TOKEN");
@@ -32,6 +33,9 @@ const App = () => {
               <Route path="directsidebar" element={<DirectSidebar />} />
 
             </Route>
+
+            {/* Dynamic route for individual channels */}
+            <Route path="/channels/:channelId" element={<GroupChat />} />
 
             {/* Settings and Profile as separate pages */}
             <Route path="/settings" element={<Settings />} />
