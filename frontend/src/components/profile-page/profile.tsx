@@ -1,62 +1,170 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import defaultPfp from "./images/defaultPfp.png";
 import { Link } from "react-router-dom";
 import { ArrowBigLeft, PencilLine } from "lucide-react";
 import "./profile.css";
 
-
 const Profile: React.FC = () => {
-    const [profilePic, setProfilePic] = useState<string>(defaultPfp); //need to fetch from backend
-    const [username, setUsername] = useState<string>("Username"); //need to fetch from backend
-    const [role] = useState<string>("Member"); //add setRole function AND need to fetch from backend
-    const [email] = useState<string>("user@example.com"); //add setEmail function AND need to fetch from backend
+    const [profilePic, setProfilePic] = useState<string>(defaultPfp);
+    const [username, setUsername] = useState<string>("Username");
+    const [role, setRole] = useState<string>("Member");
+    const [email, setEmail] = useState<string>("user@example.com");
     const [showFileInput, setShowFileInput] = useState<boolean>(false);
     const [newUsername, setNewUsername] = useState<string>("");
     const [showUsernameInput, setShowUsernameInput] = useState<boolean>(false);
     const [loading, setLoading] = useState(false);
 
-    const changeProfilePic = (event: React.ChangeEvent<HTMLInputElement>) => {
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch("http://127.0.0.1:8000/app/auth/user/", {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("access")}`,
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setUsername(data.username);
+                    setEmail(data.email);
+                    setRole(data.role);
+                    setProfilePic(data.profile_picture || defaultPfp);
+                } else {
+                    console.error("Failed to fetch user data:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Failed to fetch user data:", error);
+            }
+        };
+        fetchUserData();
+    }, []);
+
+    const changeProfilePic = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
             const file = event.target.files[0];
-            const imageUrl = URL.createObjectURL(file);
-            setProfilePic(imageUrl);
+            const formData = new FormData();
+            formData.append("profile_picture", file);
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/app/user/modify/", {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("access")}`,
+                    },
+                    body: formData,
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setProfilePic(data.profile_picture || defaultPfp);
+                } else {
+                    console.error("Failed to update profile picture:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Failed to update profile picture:", error);
+            }
         }
     };
-    const changeRole = async () => {
-        console.log("change role");
-        // const newRole = role === "member" ? "admin" : "member";
-        setLoading(true);
-        // try {
-        //   const response = await api.post("http://127.0.0.1:8000/api/update-role/", {
-        //     role: newRole,
-        //   });
-    
-        //   if (response.status === 200) {
-        //     setRole(newRole);
-        //   }
-        // } catch (error) {
-        //   console.error("Error updating role:", error);
-        // } finally {
-        //   setLoading(false);
-        // }
-    }
-    
-    const changeEmail =() => {
-        console.log("change email");
-    }
 
-    const removeProfilePic = () => {
-        setProfilePic(defaultPfp);
+    const removeProfilePic = async () => {
+        try {
+            const formData = new FormData();
+            formData.append("profile_picture", "");
+    
+            const response = await fetch("http://127.0.0.1:8000/app/user/modify/", {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("access")}`,
+                },
+                body: formData,
+            });
+    
+            console.log("Remove Profile Picture Response:", response);
+    
+            if (response.ok) {
+                const data = await response.json();
+                setProfilePic(defaultPfp);
+            } else {
+                const errorText = await response.text();
+                console.error("Failed to remove profile picture:", errorText);
+            }
+        } catch (error) {
+            console.error("Failed to remove profile picture:", error);
+        }
     };
 
-    const updateUsername = () => {
+    const updateUsername = async () => {
         if (!/^[^\s]{1,16}$/.test(newUsername)) {
             alert("Username must be 1-16 characters long with no spaces.");
             return;
         }
-        setUsername(newUsername);
-        setNewUsername("");
-        setShowUsernameInput(false);
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/app/user/modify/", {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("access")}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username: newUsername }),
+            });
+            if (response.ok) {
+                setUsername(newUsername);
+                setNewUsername("");
+                setShowUsernameInput(false);
+            } else {
+                console.error("Failed to update username:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Failed to update username:", error);
+        }
+    };
+
+    const changeRole = async () => {
+        const newRole = role === "Member" ? "Admin" : "Member";
+        setLoading(true);
+        try {
+            const response = await fetch("http://127.0.0.1:8000/app/user/modify/", {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("access")}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ role: newRole }),
+            });
+            if (response.ok) {
+                setRole(newRole);
+            } else {
+                console.error("Failed to update role:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Failed to update role:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const changeEmail = async () => {
+        const newEmail = prompt("Enter new email:");
+        if (newEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+            try {
+                const response = await fetch("http://127.0.0.1:8000/app/user/modify/", {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("access")}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ email: newEmail }),
+                });
+                if (response.ok) {
+                    setEmail(newEmail);
+                } else {
+                    console.error("Failed to update email:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Failed to update email:", error);
+            }
+        } else {
+            alert("Please enter a valid email address.");
+        }
     };
 
     return (
@@ -95,7 +203,6 @@ const Profile: React.FC = () => {
                         </div>
                         
                     </div>
-                    <Link to="/settings" className="back-button"> <ArrowBigLeft size={24} className="back-icon" /> <span>Back to Settings</span> </Link>
                     <Link to="/app/groupsidebar" className="back-button"> <ArrowBigLeft size={24} className="back-icon" /><span>Back to Text Channels</span></Link>
 
                 </div>
@@ -106,3 +213,5 @@ const Profile: React.FC = () => {
 };
 
 export default Profile;
+
+

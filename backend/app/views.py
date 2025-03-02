@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from .serializers import UserSerializer
+from .serializers import UserUpdateSerializer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.views.generic import TemplateView
@@ -18,6 +19,7 @@ import json
 from django.contrib.auth import update_session_auth_hash
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 
 #@api_view(['GET'])
 #def api_example(request):
@@ -46,6 +48,30 @@ class UserDetailView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+class ModifyUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+        serializer = UserUpdateSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ModifyUserView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
+
+    def put(self, request):
+        user = request.user
+        serializer = UserUpdateSerializer(user, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
         
 class LogoutView(APIView):

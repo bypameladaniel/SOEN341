@@ -26,3 +26,19 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(required=False)
+    email = serializers.EmailField(required=False)
+    profile_picture = serializers.ImageField(required=False, allow_null=True)
+    role = serializers.CharField(required=False)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'profile_picture', 'role']
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance

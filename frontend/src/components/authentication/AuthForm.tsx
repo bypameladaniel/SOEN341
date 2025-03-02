@@ -36,13 +36,15 @@ const AuthForm: React.FC<AuthFormProps> = ({ method, isAuthenticated }) => {
 
     try {
       const route =
-        action === "Login"
-          ? "http://127.0.0.1:8000/app/token/"
-          : "http://127.0.0.1:8000/app/user/register/";
-      const res = await api.post(route, {
-        username: username,
-        password: password,
-      });
+            action === "Login"
+                ? "http://127.0.0.1:8000/app/token/"
+                : "http://127.0.0.1:8000/app/user/register/";
+        const payload =
+            action === "Login"
+                ? { username, password }
+                : { username, email, password }; // Include email for registration
+
+        const res = await api.post(route, payload);
 
       if (action === "Login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
