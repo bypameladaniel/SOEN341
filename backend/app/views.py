@@ -62,7 +62,7 @@ class ModifyUserView(APIView):
     
 class ModifyUserView(APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes = [JSONParser, MultiPartParser, FormParser]  # Add JSONParser
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def put(self, request):
         user = request.user
