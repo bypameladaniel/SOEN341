@@ -36,24 +36,8 @@ const GroupSidebar = () => {
         setLoading(false);
       }
     };
-    // const fetchUserRole = async () => {
-    //   try {
-    //     const response = await fetch("http://127.0.0.1:8000/api/user-role/");
-    //     if (!response.ok) {
-    //       throw new Error("Failed to fetch user role");
-    //     }
-
-    //     const data = await response.json();
-    //     setRole(data.role); // does API return { "role": "admin" } or smtg else?
-    //   } catch (error) {
-    //     console.error("Error fetching user role:", error);
-    //   } finally {
-    //      setLoading(false);
-    //   }
-    // };
 
     fetchChannels();
-    // fetchUserRole();
   }, []);
 
   // Function to add a new group channel
