@@ -1,0 +1,126 @@
+.home{
+    background-color: #21303b;
+    height: 100vh; 
+    width: 100vw;  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #21303b;
+    color: white;
+    text-align: center;
+}
+
+.home-header {
+    width: 100%;
+    padding: 16px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    background-color: #27496D;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.home-main {
+    max-width: 800px;
+    width: 100%;
+    margin: auto;
+    text-align: center;
+}
+
+.home-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.home-description {
+    font-size: 18px;
+    max-width: 500px;
+    color: #DAE1E7;
+    margin: 0 auto 20px auto;
+}
+
+.home-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.login-button, .signup-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.login-button {
+    background-color: #B3C8CF;
+    color: #21303b;
+}
+
+.login-button:hover {
+    background-color: #DAE1E7;
+}
+
+.signup-button {
+    background-color: #27496D;
+    color: white;
+}
+
+.signup-button:hover {
+    background-color: #21303b;
+}
+
+.features-section {
+    margin-top: 40px;
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+    margin: auto;
+}
+
+.features-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.features-list {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 250px;
+}
+
+.feature-item h3 {
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+.feature-item p {
+    font-size: 16px;
+    color: #DAE1E7;
+    max-width: 220px;
+}

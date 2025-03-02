@@ -1,0 +1,19 @@
+.chat-area {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 88vw;
+  }
+  
+  .message-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .chat-input {
+    padding: 10px;
+    border-top: 1px solid #FFFFFF;
+  }
