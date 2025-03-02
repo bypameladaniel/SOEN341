@@ -1,0 +1,103 @@
+
+.settings{
+    background-color: #21303b;
+    height: 100vh; 
+    width: 100vw;  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.settings-container {
+    height: 645px;
+    width:450px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background-color: #B3C8CF;
+    border-radius: 10px;
+}
+
+.settings-title {
+    font-size: 2.0rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #1b3c5d;
+    text-align: center;
+}
+
+
+.edit-profile-container {
+    display: flex;
+    justify-content: left;
+    margin-top: 1rem;
+}
+
+.edit-profile-button {
+    background-color: #27496D;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    
+}
+
+.edit-profile-button:hover {
+    background-color: #1b3c5d;
+}
+
+.card-title{
+    color: #27496D;
+}
+
+.card-content {
+    color:#27496D;
+    font-size:1.0rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: #DAE1E7;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.label {
+    display: block;
+    font-size: 1.0rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #1b3c5d;
+}
+.enable-camera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #DAE1E7;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    padding: 9px;
+    font-weight: 500;
+}
+
+
+.save-button {
+    width: 100%;
+    background-color: #27496D;
+    color: white;
+    padding: 0.75rem;
+    text-align: center;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+    margin-bottom:5px;
+}
+
+.save-button:hover {
+    background-color: #1b3c5d;
+}
+
+
