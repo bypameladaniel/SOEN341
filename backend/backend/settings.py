@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'channels',
     'django_extensions',
+    'direct_messages'
 ]
 
 REST_FRAMEWORK = {
