@@ -30,6 +30,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ method, isAuthenticated }) => {
 
     if (!username || !password || (action === "Sign Up" && !email)) {
       setError("All fields are required.");
+      // action === "Login" ? navigate("/login") : navigate("/signup");
       setLoading(false);
       return;
     }
@@ -43,7 +44,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ method, isAuthenticated }) => {
             action === "Login"
                 ? { username, password }
                 : { username, email, password }; // Include email for registration
-
+        console.log(payload);
         const res = await api.post(route, payload);
 
       if (action === "Login") {
@@ -141,14 +142,24 @@ const AuthForm: React.FC<AuthFormProps> = ({ method, isAuthenticated }) => {
               <button
                 type={action === "Sign Up" ? "submit" : "button"}
                 className={action === "Login" ? "submitgray" : "submit"}
-                onClick={() => setAction("Sign Up")}
+                onClick={() => {
+                  if (action === "Login") {
+                    navigate("/signup"); // Navigate if it's gray
+                    setAction("Sign Up"); // Otherwise, just set the action
+                  }
+                }}
               >
                 Sign Up
               </button>
               <button
                 type={action === "Login" ? "submit" : "button"}
                 className={action === "Sign Up" ? "submitgray" : "submit"}
-                onClick={() => setAction("Login")}
+                onClick={() => {
+                  if (action === "Sign Up") {
+                    navigate("/login"); // Navigate if it's gray
+                    setAction("Login"); // Otherwise, just set the action
+                  }
+                }}
               >
                 Login
               </button>

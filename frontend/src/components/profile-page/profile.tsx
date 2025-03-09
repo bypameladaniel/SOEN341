@@ -119,7 +119,7 @@ const Profile: React.FC = () => {
     };
 
     const changeRole = async () => {
-        const newRole = role === "Member" ? "Admin" : "Member";
+        const newRole = role === "member" ? "admin" : "member";
         setLoading(true);
         try {
             const response = await fetch("http://127.0.0.1:8000/app/user/modify/", {

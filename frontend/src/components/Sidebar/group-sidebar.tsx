@@ -15,30 +15,47 @@ const GroupSidebar = () => {
   // State for group channels
   const [channels, setChannels] = useState<Channel[]>([]);
   const [loading, setLoading] = useState(true);
-  const [role] = useState<string>("member"); // Default to "member"
+  const [role, setRole] = useState<string>("member");
 
   const handleLogout = async () => {
     await logout();
-    <Navigate to="/"></Navigate>
+    <Navigate to="/"></Navigate>;
     window.location.reload(); // Refresh the page
   };
 
   // Fetch channels from Django backend
   useEffect(() => {
-    const fetchChannels = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get("http://127.0.0.1:8000/api/channels/channel-list/"); // Adjust endpoint as needed
-
-        setChannels(response.data);
-      } catch (error: any) {
-        console.error("Error fetching channels:", error);
+        const [channelsResponse, userResponse] = await Promise.all([
+          api.get("http://127.0.0.1:8000/api/channels/channel-list/"),
+          fetch("http://127.0.0.1:8000/app/auth/user/", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access")}`,
+            },
+          }),
+        ]);
+  
+        // Handle channels response
+        setChannels(channelsResponse.data);
+  
+        // Handle user role response
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          setRole(userData.role);
+        } else {
+          throw new Error("Failed to fetch user role");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
       } finally {
-        setLoading(false);
+        setLoading(false); // Set loading to false only once, after both requests
       }
     };
-
-    fetchChannels();
+  
+    fetchData();
   }, []);
+  
 
   // Function to add a new group channel
   const addChannel = async (channelName: string) => {
@@ -61,17 +78,16 @@ const GroupSidebar = () => {
   };
 
   const joinChannel = async (channelId: number) => {
-  try {
-    const response = await api.get("http://localhost:8000/app/auth/user/");
+    try {
+      const response = await api.get("http://localhost:8000/app/auth/user/");
 
-    await api.post(`http://localhost:8000/api/channels/join/${channelId}/`, {
-      user: response.data.username
-    });
-
-  } catch (error: any) {
-    console.error("failed to join channel:", error);
-  }
-};
+      await api.post(`http://localhost:8000/api/channels/join/${channelId}/`, {
+        user: response.data.username,
+      });
+    } catch (error: any) {
+      console.error("failed to join channel:", error);
+    }
+  };
 
   return (
     <nav className="sidebar">
@@ -87,7 +103,13 @@ const GroupSidebar = () => {
         ) : (
           channels.map((channel) => (
             <li key={channel.id} className="sidebar-item">
-              <Link to={`/channels/${channel.id}`} className="sidebar-link" onClick={() => { joinChannel(channel.id);}}>
+              <Link
+                to={`/channels/${channel.id}`}
+                className="sidebar-link"
+                onClick={() => {
+                  joinChannel(channel.id);
+                }}
+              >
                 <MessageCircle size={20} /> {channel.name}
               </Link>
             </li>
@@ -96,7 +118,10 @@ const GroupSidebar = () => {
       </ul>
 
       {role === "admin" && (
-        <button onClick={() => addChannel(`New Channel ${channels.length + 1}`)} className="add-channel-btn">
+        <button
+          onClick={() => addChannel(`New Channel ${channels.length + 1}`)}
+          className="add-channel-btn"
+        >
           ➕ Add Channel
         </button>
       )}
@@ -104,7 +129,7 @@ const GroupSidebar = () => {
       <ul className="sidebar-bottom">
         <li className="sidebar-item">
           <Link to="/settings" className="sidebar-link">
-            <Settings size={24} /> Settings 
+            <Settings size={24} /> Settings
           </Link>
         </li>
         <li className="sidebar-item">
@@ -114,9 +139,7 @@ const GroupSidebar = () => {
         </li>
         <li>
           <Link to="/" className="logout-button">
-            <button onClick={handleLogout}>
-              Log Out
-            </button>
+            <button onClick={handleLogout}>Log Out</button>
           </Link>
         </li>
       </ul>
