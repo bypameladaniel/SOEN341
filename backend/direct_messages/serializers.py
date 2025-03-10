@@ -27,3 +27,12 @@ class SendMessageSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['sender'] = self.context['request'].user
         return DirectMessage.objects.create(**validated_data)
+    
+    def validate(self, data):
+        sender = self.context['request'].user
+        receiver = data['receiver']
+
+        if sender == receiver:
+            raise serializers.ValidationError("You cannot send a message to yourself.")
+
+        return data
