@@ -4,6 +4,7 @@ import { MessageCircle, Settings, User, Inbox } from "lucide-react";
 import "./sidebar.css";
 import logout from "../authentication/logout";
 import api from "../../api";
+import { AxiosResponse } from "axios"; // Import AxiosResponse
 
 // Define a type for channels
 interface Channel {
@@ -11,11 +12,19 @@ interface Channel {
   name: string;
 }
 
+// Define the structure of the response data
+interface ChannelResponse {
+  id: number;
+  name: string;
+  members: any[]; // Adjust this type based on your actual data structure
+}
+
 const GroupSidebar = () => {
-  // State for group channels
   const [channels, setChannels] = useState<Channel[]>([]);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<string>("member");
+  const [showInput, setShowInput] = useState(false);
+  const [newChannelName, setNewChannelName] = useState("");
 
   const handleLogout = async () => {
     await logout();
@@ -35,10 +44,10 @@ const GroupSidebar = () => {
             },
           }),
         ]);
-  
+
         // Handle channels response
         setChannels(channelsResponse.data);
-  
+
         // Handle user role response
         if (userResponse.ok) {
           const userData = await userResponse.json();
@@ -49,32 +58,30 @@ const GroupSidebar = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setLoading(false); // Set loading to false only once, after both requests
+        setLoading(false);
       }
     };
-  
+
     fetchData();
   }, []);
-  
 
   // Function to add a new group channel
   const addChannel = async (channelName: string) => {
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/channels/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name: channelName }),
+    api
+      .post<ChannelResponse>(`http://localhost:8000/api/channels/create/`, {
+        name: channelName,
+        members: [],
+      })
+      .then((response: AxiosResponse<ChannelResponse>) => {
+        // If the API call is successful, add the new channel to the list
+        const newChannel: Channel = response.data; // response.data is now properly typed
+        setChannels((prevChannels) => [...prevChannels, newChannel]); // Update the channels state
+        setShowInput(false); // Hide the input field and OK/Cancel buttons
+        setNewChannelName(""); // Clear the input field
+      })
+      .catch((error) => {
+        console.error("Error creating channel:", error);
       });
-      if (!response.ok) {
-        throw new Error("Failed to add channel");
-      }
-      const newChannel: Channel = await response.json();
-      setChannels([...channels, newChannel]);
-    } catch (error) {
-      console.error("Error adding channel:", error);
-    }
   };
 
   const joinChannel = async (channelId: number) => {
@@ -117,13 +124,36 @@ const GroupSidebar = () => {
         )}
       </ul>
 
+      {/* Add Channel Section */}
       {role === "admin" && (
-        <button
-          onClick={() => addChannel(`New Channel ${channels.length + 1}`)}
-          className="add-channel-btn"
-        >
-          ➕ Add Channel
-        </button>
+        <div className="create-channel">
+          {showInput ? (
+            <div>
+              <input
+                className="channel-name-input"
+                type="text"
+                value={newChannelName}
+                onChange={(e) => setNewChannelName(e.target.value)}
+                placeholder="Enter channel name"
+              />
+              <button
+                className="channel-add-ok"
+                onClick={() => addChannel(newChannelName)}
+                disabled={!newChannelName.trim()} // Disable OK button if input is empty
+              >
+                OK
+              </button>
+              <button className="cancel-channel-add-btn" onClick={() => setShowInput(false)}>Cancel</button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowInput(true)}
+              className="add-channel-btn"
+            >
+              ➕ Add Channel
+            </button>
+          )}
+        </div>
       )}
 
       <ul className="sidebar-bottom">
