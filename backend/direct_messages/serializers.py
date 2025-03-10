@@ -10,3 +10,18 @@ class DirectMessageSerializer(serializers.ModelSerializer):
          model = DirectMessage
          fields = ['id', 'sender', 'receiver', 'message', 'timestamp']
          read_only_fields = ['sender', 'timestamp']
+
+
+
+class SendMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DirectMessage
+        fields = ['receiver', 'message'] 
+        extra_kwargs = {
+            'receiver': {'required': True},
+            'message': {'required': True},
+        }
+
+    def create(self, validated_data):
+        validated_data['sender'] = self.context['request'].user
+        return DirectMessage.objects.create(**validated_data)
