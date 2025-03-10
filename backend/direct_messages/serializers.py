@@ -11,8 +11,6 @@ class DirectMessageSerializer(serializers.ModelSerializer):
          fields = ['id', 'sender', 'receiver', 'message', 'timestamp']
          read_only_fields = ['sender', 'timestamp']
 
-
-
 class SendMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = DirectMessage
