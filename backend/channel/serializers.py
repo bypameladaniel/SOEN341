@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'role', 'profile_picture']
 
 class ChannelSerializer(serializers.ModelSerializer):
-    members = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
+    members = UserSerializer(many=True, read_only=True) #serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
     members_detail = UserSerializer(many=True, read_only=True)
     picture = serializers.ImageField(required=False, allow_null=True)
     
