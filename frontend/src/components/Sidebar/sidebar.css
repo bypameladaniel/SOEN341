@@ -43,3 +43,52 @@
     list-style: none;
     margin-top: auto;
 }
+
+.add-channel-btn {
+    width: 100%;
+}
+
+.cancel-channel-add-btn {
+    width: 100%;
+}
+
+.channel-name-input {
+    width:100%;
+    font-size: 16px; /* Readable font size */
+    color: #333; /* Dark text color */
+    background-color: #f9f9f9; /* Light background */
+    border: 2px solid #ddd; /* Subtle border */
+    border-radius: 8px; /* Rounded corners */
+    outline: none; /* Remove default outline */
+    transition: all 0.3s ease;
+}
+
+.channel-name-input:hover {
+    border-color: #bbb; /* Darker border on hover */
+    background-color: #fff; /* Slightly lighter background */
+  }
+  
+  /* Focus effect */
+  .channel-name-input:focus {
+    border-color: #007bff; /* Blue border on focus */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3); /* Subtle glow effect */
+    background-color: #fff; /* White background on focus */
+  }
+  
+  /* Placeholder styling */
+  .channel-name-input::placeholder {
+    color: #999; /* Light gray placeholder text */
+    font-style: italic; /* Italic placeholder */
+  }
+  
+  /* Disabled state */
+  .channel-name-input:disabled {
+    background-color: #eee; /* Light gray background */
+    border-color: #ccc; /* Light gray border */
+    color: #999; /* Light gray text */
+    cursor: not-allowed; /* Not-allowed cursor */
+  }
+
+  .channel-add-ok {
+    width:100%;
+  }

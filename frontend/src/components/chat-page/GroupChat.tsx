@@ -1,7 +1,7 @@
 import GroupSidebar from "../Sidebar/group-sidebar";
 import ChatArea from "../messaging/ChatArea";
 
-import "./GroupChat.css";
+import "./Chat.css";
 
 const GroupChat = () => {
     return (
