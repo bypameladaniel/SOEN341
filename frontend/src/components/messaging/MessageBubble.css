@@ -25,9 +25,16 @@
     padding: 10px;
 }
 
-.sender-name {
+.metaData {
     font-weight: bold;
     font-size: 0.8em;
     margin-bottom: 4px;
+}
+
+.senderName {
     color: #EFE9D5;
+}
+
+.timestamp {
+    color: #405D72;
 }
