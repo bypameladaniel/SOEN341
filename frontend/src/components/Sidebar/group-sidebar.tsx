@@ -85,11 +85,11 @@ const GroupSidebar = () => {
       });
   };
 
-  const joinChannel = async (channelId: number) => {
+  const joinChannel = async (channelName: number) => {
     try {
       const response = await api.get("http://localhost:8000/app/auth/user/");
 
-      await api.post(`http://localhost:8000/api/channels/join/${channelId}/`, {
+      await api.post(`http://localhost:8000/api/channels/join/${channelName}/`, {
         user: response.data.username,
       });
     } catch (error: any) {
