@@ -1,11 +1,14 @@
 .sidebar {
-    width: 10vw;
+    width: 170px;
     height: 100vh;
     background-color: #21303b;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding: 1rem;
+    min-height: 100vh;
+    overflow-y: auto;
+    transition: width 0.3s ease;
 }
 
 .sidebar-list {
@@ -42,6 +45,7 @@
     padding-top: 1rem;
     list-style: none;
     margin-top: auto;
+    padding-left: 10px; 
 }
 
 .add-channel-btn {
@@ -91,4 +95,12 @@
 
   .channel-add-ok {
     width:100%;
+  }
+
+/* Media queries for responsiveness */
+  @media (max-width: 768px) {
+    .group-sidebar {
+      width: 100%;
+      height: auto;
+    }
   }
