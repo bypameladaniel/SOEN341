@@ -24,3 +24,10 @@
 .BubbleText {
     padding: 10px;
 }
+
+.sender-name {
+    font-weight: bold;
+    font-size: 0.8em;
+    margin-bottom: 4px;
+    color: #EFE9D5;
+}
