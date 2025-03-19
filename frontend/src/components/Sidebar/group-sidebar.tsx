@@ -44,10 +44,9 @@ const GroupSidebar = () => {
             },
           }),
         ]);
-
+  
         // Handle channels response
         setChannels(channelsResponse.data);
-
         // Handle user role response
         if (userResponse.ok) {
           const userData = await userResponse.json();
@@ -58,12 +57,12 @@ const GroupSidebar = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setLoading(false);
+        setLoading(false); // Set loading to false only once, after both requests
       }
     };
-
     fetchData();
   }, []);
+  
 
   // Function to add a new group channel
   const addChannel = async (channelName: string) => {
