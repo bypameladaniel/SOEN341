@@ -94,18 +94,22 @@ const ChatArea: React.FC = () => {
       };
 
       setWs(socket);
-
-      // Cleanup WebSocket connection on unmount
-      return () => {
-        socket.close();
-      };
     }
   }, [channelName, currentUser]);
 
   // Step 4: Handle sending messages via WebSocket
   const sendMessage = (message: string) => {
     if (ws) {
-      ws.send(JSON.stringify({ message }));
+      ws.send(JSON.stringify({ message, user: currentUser }));
+
+       // Send the message to the server
+    api
+    .post(`http://localhost:8000/api/channels/message/add/`, { channel: channelName, content: message })
+    .catch((error) => {
+      console.error('Error sending message:', error);
+      // Revert the UI if the message fails to send
+      setMessages((prevMessages) => prevMessages.filter((msg) => msg.message !== message));
+    });
       
       // Optimistically update the UI
       setMessages((prevMessages) => [...prevMessages, { message, sender: true }]);
@@ -121,6 +125,14 @@ const ChatArea: React.FC = () => {
       });
     }
   }, [messages]);
+
+  useEffect(() => {
+    return () => {
+        if (ws) {
+            ws.close();
+        }
+    };
+}, [ws]);
 
   return (
     <div className="chat-area">

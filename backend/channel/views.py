@@ -95,9 +95,9 @@ def add_message(request):
     try:
         channel_name = request.data.get("channel")
         if not channel_name:
-            return Response({"error": "Channel ID is required"}, status=400)
+            return Response({"error": "Channel name is required"}, status=400)
         
-        channel = get_object_or_404(Channel, id=channel_name)
+        channel = get_object_or_404(Channel, name=channel_name)
 
         if request.user not in channel.members.all():
             return Response({'error': 'You are not a member of this channel'}, status=403)

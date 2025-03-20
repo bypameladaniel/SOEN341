@@ -20,7 +20,10 @@ class ChannelSerializer(serializers.ModelSerializer):
         
 class MessageSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
-    channel = serializers.PrimaryKeyRelatedField(queryset=Channel.objects.all())
+    channel = serializers.SlugRelatedField(
+    queryset=Channel.objects.all(),  # The queryset to look up the Channel model
+    slug_field='name',              # Use the 'name' field to reference the Channel
+    )
     timestamp = serializers.DateTimeField(read_only=True)
     
     class Meta:
