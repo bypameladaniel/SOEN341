@@ -10,6 +10,7 @@ interface Message {
   user: {
     username: string;
   };
+  timestamp: string;
 }
 
 const ChatArea: React.FC = () => {
@@ -22,36 +23,53 @@ const ChatArea: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchMessagesAndUser = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        setMessages([]);
-        const [messagesResponse, currentUserResponse] = await Promise.all([
-          api.get(`http://localhost:8000/api/channels/${channelName}/messages/`),
-          api.get("http://localhost:8000/app/auth/user/"),
-        ]);
-
-        const user = currentUserResponse.data.username;
-        setCurrentUser(user);
-
-        const formattedMessages = messagesResponse.data.messages.map((message: Message) => ({
-          message: message.content,
-          sender: user === message.user.username,
-        }));
-
-        setMessages(formattedMessages);
-      } catch (error) {
-        setError('Failed to fetch messages. Please try again later.');
-        console.error('Error fetching messages:', error);
-      } finally {
-        setIsLoading(false);
+    let isMounted = true;
+    const debounceTimer = setTimeout(() => {
+      const fetchMessages = async () => {
+        try {
+          setIsLoading(true);
+          setError(null);
+          setMessages([]);
+  
+          const [messagesResponse, currentUserResponse] = await Promise.all([
+            api.get(`http://localhost:8000/api/channels/${channelName}/messages/`),
+            api.get("http://localhost:8000/app/auth/user/"),
+          ]);
+  
+          if (!isMounted) return;
+  
+          const user = currentUserResponse.data.username;
+          setCurrentUser(user);
+        
+          const formattedMessages = messagesResponse.data.messages.map((message: Message) => ({
+            message: message.content,
+            sender: currentUser === message.user.username,
+            senderName: message.user.username,
+            timestamp: new Date(message.timestamp).toLocaleTimeString(), // Format the timestamp
+          }));
+  
+          setMessages(formattedMessages);
+        } catch (error) {
+          if (isMounted) {
+            setError('Failed to fetch messages. Please try again later.');
+            console.error('Error fetching messages:', error);
+          }
+        } finally {
+          if (isMounted) {
+            setIsLoading(false);
+          }
+        }
+      };
+  
+      if (channelName) {
+        fetchMessages();
       }
+    }, 100);
+  
+    return () => {
+      isMounted = false;
+      clearTimeout(debounceTimer);
     };
-
-    if (channelName) {
-      fetchMessagesAndUser();
-    }
   }, [channelName]);
 
   useEffect(() => {

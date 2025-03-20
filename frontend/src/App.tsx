@@ -35,7 +35,7 @@ const App = () => {
             </Route>
 
             {/* Dynamic route for individual channels */}
-            <Route path="/channels/:channelId" element={<GroupChat />} />
+            <Route path="/channels/:channelName" element={<GroupChat />} />
 
             {/* Settings and Profile as separate pages */}
             <Route path="/settings" element={<Settings />} />
