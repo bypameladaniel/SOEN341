@@ -43,8 +43,7 @@ const ChatArea: React.FC = () => {
         
           const formattedMessages = messagesResponse.data.messages.map((message: Message) => ({
             message: message.content,
-            sender: currentUser === message.user.username,
-            senderName: message.user.username,
+            sender: user === message.user.username, // this has to be user and not currentUser because it's async so currentUser still holds null at this point
             timestamp: new Date(message.timestamp).toLocaleTimeString(), // Format the timestamp
           }));
   
@@ -65,14 +64,7 @@ const ChatArea: React.FC = () => {
         fetchMessages();
       }
     }, 100);
-  
-    return () => {
-      isMounted = false;
-      clearTimeout(debounceTimer);
-    };
-  }, [channelName]);
 
-  useEffect(() => {
     if (channelName && currentUser) {
       const socket = new WebSocket(`ws://localhost:8000/ws/chat/${channelName}/`);
 
@@ -84,7 +76,7 @@ const ChatArea: React.FC = () => {
         const data = JSON.parse(event.data);
         const newMessage = {
           message: data.message,
-          sender: data.sender === currentUser,
+          sender: data.user === currentUser,
         };
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       };
@@ -95,26 +87,16 @@ const ChatArea: React.FC = () => {
 
       setWs(socket);
     }
-  }, [channelName, currentUser]);
+  
+    return () => {
+      if (ws) {
+        ws.close();
+      }
 
-  // Step 4: Handle sending messages via WebSocket
-  const sendMessage = (message: string) => {
-    if (ws) {
-      ws.send(JSON.stringify({ message, user: currentUser }));
-
-       // Send the message to the server
-    api
-    .post(`http://localhost:8000/api/channels/message/add/`, { channel: channelName, content: message })
-    .catch((error) => {
-      console.error('Error sending message:', error);
-      // Revert the UI if the message fails to send
-      setMessages((prevMessages) => prevMessages.filter((msg) => msg.message !== message));
-    });
-      
-      // Optimistically update the UI
-      setMessages((prevMessages) => [...prevMessages, { message, sender: true }]);
-    }
-  };
+      isMounted = false;
+      clearTimeout(debounceTimer);
+    };
+  }, [channelName]);
 
   // Auto-scroll to the bottom when messages change
   useEffect(() => {
@@ -126,13 +108,22 @@ const ChatArea: React.FC = () => {
     }
   }, [messages]);
 
-  useEffect(() => {
-    return () => {
-        if (ws) {
-            ws.close();
-        }
+    //Handle sending messages
+    const sendMessage = (message: string) => {
+      //websocket
+      if (ws) {
+        ws.send(JSON.stringify({ message, user: currentUser }));
+      }
+  
+        // Send the message to the server via the route so it gets added to database meaning it gets loaded when you enter the channel :))) yipee woohoo
+        api
+        .post(`http://localhost:8000/api/channels/message/add/`, { channel: channelName, content: message })
+        .catch((error) => {
+          console.error('Error sending message:', error);
+          // Revert the UI if the message fails to send :( oh no
+          setMessages((prevMessages) => prevMessages.filter((msg) => msg.message !== message));
+        });
     };
-}, [ws]);
 
   return (
     <div className="chat-area">
