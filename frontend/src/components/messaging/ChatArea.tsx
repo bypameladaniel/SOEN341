@@ -131,7 +131,13 @@ const ChatArea: React.FC = () => {
         {isLoading && <p>Loading messages...</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {messages.map((msg, index) => (
-          <MessageBubble key={index} message={msg.message} sender={msg.sender} />
+          <MessageBubble 
+            key={index} 
+            message={msg.message} 
+            sender={msg.sender} 
+            senderName={msg.senderName}
+            timestamp={msg.timestamp} // Pass timestamp to MessageBubble
+          />
         ))}
       </div>
       <div className="chat-input">

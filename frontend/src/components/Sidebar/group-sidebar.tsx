@@ -58,13 +58,12 @@ const GroupSidebar = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setLoading(false); // Set loading to false only once, after both requests
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
-  
 
   // Function to add a new group channel
   const addChannel = async (channelName: string) => {
