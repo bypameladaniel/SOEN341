@@ -96,7 +96,7 @@ const ChatArea: React.FC = () => {
       isMounted = false;
       clearTimeout(debounceTimer);
     };
-  }, [channelName]);
+  }, [channelName, currentUser]);
 
   // Auto-scroll to the bottom when messages change
   useEffect(() => {
