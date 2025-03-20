@@ -14,7 +14,7 @@ interface Message {
 
 const ChatArea: React.FC = () => {
   const { channelId } = useParams<{ channelId: string }>();
-  const [messages, setMessages] = useState<{ message: string; sender: boolean }[]>([]);
+  const [messages, setMessages] = useState<{ message: string; sender: boolean; senderName?: string }[]>([]); // Add senderName to the state
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const messageContainerRef = useRef<HTMLDivElement>(null);
@@ -39,6 +39,7 @@ const ChatArea: React.FC = () => {
           const formattedMessages = messagesResponse.data.messages.map((message: Message) => ({
             message: message.content,
             sender: currentUser === message.user.username,
+            senderName: message.user.username, // Add senderName to the message object
           }));
   
           setMessages(formattedMessages);
@@ -95,7 +96,12 @@ const ChatArea: React.FC = () => {
         {isLoading && <p>Loading messages...</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {messages.map((msg, index) => (
-          <MessageBubble key={index} message={msg.message} sender={msg.sender} />
+          <MessageBubble 
+            key={index} 
+            message={msg.message} 
+            sender={msg.sender} 
+            senderName={msg.senderName} // Pass senderName to MessageBubble
+          />
         ))}
       </div>
       <div className="chat-input">
