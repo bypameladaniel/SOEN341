@@ -5,12 +5,13 @@ interface MessageBubbleProps {
     message: string;
     sender?: boolean;
     senderName?: string; // Add senderName prop
+    timestamp?: string;
 }
 
-const MessageBubble: React.FC<MessageBubbleProps> = ({ message, sender, senderName }) => {
+const MessageBubble: React.FC<MessageBubbleProps> = ({ message, sender, senderName, timestamp }) => {
     return (
-        <div className={`Bubble test ${sender ? "sender" : "receiver"}`}> 
-            {!sender && senderName && <div className="sender-name">{senderName}</div>} {/* Display sender name if it's a received message */}
+        <div className={`Bubble ${sender ? "sender" : "receiver"}`}> 
+            {senderName && <div className="metaData">{!sender && <text className="senderName">{senderName} </text> }<text className="timestamp">{timestamp}</text></div>}
             {message.split('\n').map((line, index) => (
                 <React.Fragment key={index}>
                     {line}
