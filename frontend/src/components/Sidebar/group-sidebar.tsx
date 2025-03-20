@@ -85,7 +85,7 @@ const GroupSidebar = () => {
       });
   };
 
-  const joinChannel = async (channelName: number) => {
+  const joinChannel = async (channelName: string) => {
     try {
       const response = await api.get("http://localhost:8000/app/auth/user/");
 
@@ -110,12 +110,12 @@ const GroupSidebar = () => {
           <p>Loading channels...</p>
         ) : (
           channels.map((channel) => (
-            <li key={channel.id} className="sidebar-item">
+            <li key={channel.name} className="sidebar-item">
               <Link
-                to={`/channels/${channel.id}`}
+                to={`/channels/${channel.name}`}
                 className="sidebar-link"
                 onClick={() => {
-                  joinChannel(channel.id);
+                  joinChannel(channel.name);
                 }}
               >
                 <MessageCircle size={20} /> {channel.name}

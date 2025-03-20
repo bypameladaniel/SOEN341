@@ -25,7 +25,7 @@ application = ProtocolTypeRouter({
     "websocket" : AuthMiddlewareStack(
         URLRouter([
             # Ensure the WebSocket path matches your frontend's WebSocket URL
-            path("ws/chat/<str:channel_id>/", ChatConsumer.as_asgi()),  # Here, <str:channel_id> captures the channel ID
+            path("ws/chat/<str:channel_name>/", ChatConsumer.as_asgi()),  
         ]) 
     )
 })

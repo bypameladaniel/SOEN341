@@ -85,7 +85,7 @@ def delete_channel(request, channel_name):
     if not request.user.is_admin():
         return Response({"error": "Only admins can delete channels"}, status=403)
     
-    channel = get_object_or_404(Channel, id=channel_name)
+    channel = get_object_or_404(Channel, name=channel_name)
     channel.delete()
     return Response({"message": "Channel deleted successfully"}, status=204)
 
@@ -93,11 +93,11 @@ def delete_channel(request, channel_name):
 @permission_classes([IsAuthenticated])
 def add_message(request):
     try:
-        channel_id = request.data.get("channel")
-        if not channel_id:
+        channel_name = request.data.get("channel")
+        if not channel_name:
             return Response({"error": "Channel ID is required"}, status=400)
         
-        channel = get_object_or_404(Channel, id=channel_id)
+        channel = get_object_or_404(Channel, id=channel_name)
 
         if request.user not in channel.members.all():
             return Response({'error': 'You are not a member of this channel'}, status=403)
