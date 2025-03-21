@@ -39,4 +39,6 @@ The second feature will be a direct messaging system where users can message eac
 #### 3. User Roles & Moderation
 The third feature will be a hierarchy of users, specifically, there will be admins and members where the admins can moderate conversations by deleting messages and also create/delete channels in which the members can send and view messages.
 
-Another feature that is to be determined will be implemented as a part of this project.
+#### 4. Message Reactions with Emojis
+The additional feature that will be implemented will be the ability for users to react to messages using a selection of emojis. 
+This feature will enhance communication by allowing users to express emotions, feedback, or agreement without sending a separate message.
