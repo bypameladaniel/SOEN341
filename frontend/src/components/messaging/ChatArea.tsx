@@ -10,6 +10,7 @@ interface GroupMessage {
   user: {
     username: string;
   };
+  senderName: string;
   timestamp: string;
 }
 
@@ -18,6 +19,7 @@ interface DirectMessage {
   sender: {
     username: string;
   };
+  senderName: string;
   timestamp: string;
 }
 
@@ -32,7 +34,7 @@ const ChatArea: React.FC = () => {
   const { channelName, userId } = useParams<{ channelName?: string; userId?: string }>();
   const isDirectMessage = !!userId;
   
-  const [messages, setMessages] = useState<{ message: string; sender: boolean }[]>([]);
+  const [messages, setMessages] = useState<{ message: string; sender: boolean; senderName:string; timestamp: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [ws, setWs] = useState<WebSocket | null>(null);
@@ -63,6 +65,7 @@ const ChatArea: React.FC = () => {
       ).map((message: MessageType) => ({
         message: isDirectMessage ? (message as DirectMessage).message : (message as GroupMessage).content,
         sender: isDirectMessage ? username === (message as DirectMessage).sender.username : username === (message as GroupMessage).user.username,
+        senderName: isDirectMessage ? (message as DirectMessage).sender.username : (message as GroupMessage).user.username,
         timestamp: new Date(message.timestamp).toLocaleTimeString(),
       }));
 
@@ -91,11 +94,16 @@ const ChatArea: React.FC = () => {
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      console.log(new Date(data.timestamp).toLocaleTimeString());
       const newMessage = {
         message: data.message,
         sender: data.user.name === currentUser.name,
+        timestamp: new Date(data.timestamp).toLocaleTimeString(),
+        senderName: data.user.name,
       };
       setMessages((prevMessages) => [...prevMessages, newMessage]);
+      {console.log(messages);}
+
     };
 
     socket.onclose = (event) => {
@@ -169,6 +177,8 @@ const ChatArea: React.FC = () => {
             key={index} 
             message={msg.message} 
             sender={msg.sender} 
+            senderName={msg.senderName}
+            timestamp={msg.timestamp}
           />
         ))}
       </div>
