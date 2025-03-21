@@ -3,7 +3,9 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.channel_group_name = f'{self.scope['url_route']['kwargs']['channel_name']}'
+        self.channel_group_name = f'chat_{self.scope['url_route']['kwargs']['channel_name'].replace(" ","_")}'
+
+        print(self.channel_group_name)
 
         await self.channel_layer.group_add(
             self.channel_group_name,
