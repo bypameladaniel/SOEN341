@@ -135,8 +135,8 @@ const ChatArea: React.FC = () => {
             key={index} 
             message={msg.message} 
             sender={msg.sender} 
-            senderName={msg.senderName}
-            timestamp={msg.timestamp} // Pass timestamp to MessageBubble
+            //senderName={msg.senderName}
+            //timestamp={msg.timestamp} // Pass timestamp to MessageBubble
           />
         ))}
       </div>

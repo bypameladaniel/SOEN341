@@ -3,17 +3,19 @@ import { Link, Navigate } from "react-router-dom";
 import { MessageCircle, Settings, User, UsersRound } from "lucide-react";
 import "./sidebar.css";
 import logout from "../authentication/logout";
+import api from "../../api";
 
-// Define a type for conversations
-interface Conversation {
+interface User {
   id: number;
-  name: string;
+  username: string;
+  email: string;
+  profile_picture: string | null;
+  role: string;
 }
 
 const DirectSidebar = () => {
-  // State for direct message conversations
-  const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<User[]>([]);
 
   const handleLogout = async () => {
     await logout();
@@ -23,42 +25,20 @@ const DirectSidebar = () => {
 
   // Fetch conversations from Django backend
   useEffect(() => {
-    const fetchConversations = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/conversations/"); // Adjust endpoint as needed
-        if (!response.ok) {
-          throw new Error("Failed to fetch conversations");
-        }
-        const data: Conversation[] = await response.json();
-        setConversations(data);
+        const response = await api.get("http://localhost:8000/api/direct_messages/list-users/");
+        setUsers(response.data);
       } catch (error) {
-        console.error("Error fetching conversations:", error);
+        console.error("Error fetching users:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchConversations();
+  
+    fetchData();
   }, []);
-
-  // Function to add a new conversation
-  const addConversation = async (conversationName: string) => {
-    try {
-      const response = await fetch("http://localhost:8000/api/conversations/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name: conversationName }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to add conversation");
-      }
-      const newConversation: Conversation = await response.json();
-      setConversations([...conversations, newConversation]);
-    } catch (error) {
-      console.error("Error adding conversation:", error);
-    }
-  };
+  
 
   return (
     <nav className="sidebar">
@@ -70,21 +50,18 @@ const DirectSidebar = () => {
         </li>
   
         {loading ? (
-          <p>Loading conversations...</p>
+        <p>Loading users...</p>
         ) : (
-          conversations.map((conversation) => (
-            <li key={conversation.id} className="sidebar-item">
-              <Link to={`/conversations/${conversation.id}`} className="sidebar-link">
-                <MessageCircle size={20} /> {conversation.name}
+          users.map((user) => (
+            <li key={user.id} className="sidebar-item">
+              <Link to={`/conversations/${user.id}`} className="sidebar-link">
+                <MessageCircle size={20} /> {user.username}
               </Link>
             </li>
           ))
         )}
+
       </ul>
-  
-      <button onClick={() => addConversation(`New Conversation ${conversations.length + 1}`)} className="new-conversation-btn">
-        ➕ New Conversation
-      </button>
 
       <ul className="sidebar-bottom">
         <li className="sidebar-item">
