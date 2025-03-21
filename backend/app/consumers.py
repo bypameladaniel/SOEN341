@@ -7,6 +7,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         print(self.channel_group_name)
 
+
         await self.channel_layer.group_add(
             self.channel_group_name,
             self.channel_name
