@@ -41,6 +41,25 @@ class UserListView(generics.ListAPIView):
         current_user = self.request.user
         return User.objects.exclude(id=current_user.id)
     
+class ConversationView(generics.ListAPIView):
+    serializer_class = DirectMessageSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        recipient_id = self.kwargs.get("recipient_id")
+        recipient = get_object_or_404(User, id=recipient_id)
+
+        return DirectMessage.objects.filter(
+            sender=self.request.user, receiver=recipient
+        ) | DirectMessage.objects.filter(
+            sender=recipient, receiver=self.request.user
+        )
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
 class SendMessageView(generics.CreateAPIView):
     queryset = DirectMessage.objects.all()
     serializer_class = DirectMessageSerializer
