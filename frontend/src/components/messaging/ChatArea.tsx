@@ -106,29 +106,27 @@ const ChatArea: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchMessages();  // Fetch messages when component mounts or params change
+    if(!isLoading) {
+      initWebSocket();
+    }
+  }, [isLoading]);
 
-    return () => {
+  useEffect(() => {
+      fetchMessages();  // Fetch messages when component mounts or params change
+
       if (ws) {
         ws.close();
       }
-    };
+    
   }, [channelName, userId]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     // Only initialize the WebSocket connection once `currentUser` is set
     if (currentUser && !ws) {
       initWebSocket();  // Establish the WebSocket connection only once
     }
-
-    // Cleanup the WebSocket connection when the component unmounts or params change
-    return () => {
-      if (ws) {
-        ws.close();
-      }
-    };
 }, [currentUser, ws]);  // Dependency on `currentUser` and `ws` ensures WebSocket is created only once
-
+*/
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
