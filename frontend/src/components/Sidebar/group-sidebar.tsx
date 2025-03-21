@@ -38,7 +38,7 @@ const GroupSidebar = () => {
       try {
         const [channelsResponse, userResponse] = await Promise.all([
           api.get("http://127.0.0.1:8000/api/channels/channel-list/"),
-          fetch("http://127.0.0.1:8000/app/auth/user/", {
+            fetch("http://127.0.0.1:8000/app/auth/user/", {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access")}`,
             },

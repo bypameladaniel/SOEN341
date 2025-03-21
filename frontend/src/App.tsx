@@ -9,6 +9,7 @@ import Layout from "./layout";
 // import { useState } from "react";
 import AuthForm from "./components/authentication/AuthForm";
 import GroupSidebar from "./components/Sidebar/group-sidebar";
+import DirectChat from "./components/chat-page/DirectChat";
 
 const App = () => {
   const isAuthenticated = !localStorage.getItem("ACCESS_TOKEN");
@@ -36,6 +37,9 @@ const App = () => {
 
             {/* Dynamic route for individual channels */}
             <Route path="/channels/:channelName" element={<GroupChat />} />
+
+            {/* Dynamic route for direct chats */}
+            <Route path="/conversations/:userId" element={<DirectChat />} />
 
             {/* Settings and Profile as separate pages */}
             <Route path="/settings" element={<Settings />} />
