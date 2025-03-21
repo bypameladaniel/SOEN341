@@ -5,7 +5,7 @@ import MessageBubble from './MessageBubble';
 import ChatInputTextBox from './ChatInputTextBox';
 import api from '../../api';
 
-interface Message {
+interface GroupMessage {
   content: string;
   user: {
     username: string;
@@ -13,92 +13,124 @@ interface Message {
   timestamp: string;
 }
 
+interface DirectMessage {
+  message: string;
+  sender: {
+    username: string;
+  };
+  timestamp: string;
+}
+
+type MessageType = GroupMessage | DirectMessage;
+
+interface User {
+  id: string;
+  name: string;
+}
+
 const ChatArea: React.FC = () => {
-  const { channelName } = useParams<{ channelName: string }>();
+  const { channelName, userId } = useParams<{ channelName?: string; userId?: string }>();
+  const isDirectMessage = !!userId;
+  
   const [messages, setMessages] = useState<{ message: string; sender: boolean }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [ws, setWs] = useState<WebSocket | null>(null);
   const messageContainerRef = useRef<HTMLDivElement>(null);
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  // Fetch messages and current user
+  const fetchMessages = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      setMessages([]);
+
+      const [messagesResponse, currentUserResponse] = await Promise.all([
+        isDirectMessage
+          ? api.get(`http://localhost:8000/api/direct_messages/${userId}/`)
+          : api.get(`http://localhost:8000/api/channels/${channelName}/messages/`),
+        api.get("http://localhost:8000/app/auth/user/"),
+      ]);
+
+      const username = currentUserResponse.data.username;
+      const id = currentUserResponse.data.id;
+      setCurrentUser({ id, name: username });
+
+      const formattedMessages = (isDirectMessage
+        ? messagesResponse.data.direct_messages
+        : messagesResponse.data.messages
+      ).map((message: MessageType) => ({
+        message: isDirectMessage ? (message as DirectMessage).message : (message as GroupMessage).content,
+        sender: isDirectMessage ? username === (message as DirectMessage).sender.username : username === (message as GroupMessage).user.username,
+        timestamp: new Date(message.timestamp).toLocaleTimeString(),
+      }));
+
+      setMessages(formattedMessages);
+    } catch (error) {
+      setError('Failed to fetch messages. Please try again later.');
+      console.error('Error fetching messages:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Initialize WebSocket connection
+  const initWebSocket = () => {
+    if (!currentUser) return;
+
+    const socketUrl = isDirectMessage
+      ? `ws://localhost:8000/ws/chat/${Math.min(Number(userId), Number(currentUser.id))}_${Math.max(Number(userId), Number(currentUser.id))}/`
+      : `ws://localhost:8000/ws/chat/${channelName}/`;
+
+    const socket = new WebSocket(socketUrl);
+
+    socket.onopen = () => {
+      console.log('WebSocket connection established');
+    };
+
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      const newMessage = {
+        message: data.message,
+        sender: data.user.name === currentUser.name,
+      };
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    };
+
+    socket.onclose = (event) => {
+      console.log('WebSocket connection closed', event);
+    };
+
+    setWs(socket);
+  };
 
   useEffect(() => {
-    let isMounted = true;
-    const debounceTimer = setTimeout(() => {
-      const fetchMessages = async () => {
-        try {
-          setIsLoading(true);
-          setError(null);
-          setMessages([]);
-  
-          const [messagesResponse, currentUserResponse] = await Promise.all([
-            api.get(`http://localhost:8000/api/channels/${channelName}/messages/`),
-            api.get("http://localhost:8000/app/auth/user/"),
-          ]);
-  
-          if (!isMounted) return;
-  
-          const user = currentUserResponse.data.username;
-          setCurrentUser(user);
-        
-          const formattedMessages = messagesResponse.data.messages.map((message: Message) => ({
-            message: message.content,
-            sender: user === message.user.username, // this has to be user and not currentUser because it's async so currentUser still holds null at this point
-            timestamp: new Date(message.timestamp).toLocaleTimeString(), // Format the timestamp
-          }));
-  
-          setMessages(formattedMessages);
-        } catch (error) {
-          if (isMounted) {
-            setError('Failed to fetch messages. Please try again later.');
-            console.error('Error fetching messages:', error);
-          }
-        } finally {
-          if (isMounted) {
-            setIsLoading(false);
-          }
-        }
-      };
-  
-      if (channelName) {
-        fetchMessages();
-      }
-    }, 100);
+    fetchMessages();  // Fetch messages when component mounts or params change
 
-    if (channelName && currentUser) {
-      const socket = new WebSocket(`ws://localhost:8000/ws/chat/${channelName}/`);
-
-      socket.onopen = () => {
-        console.log('WebSocket connection established');
-      };
-
-      socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        const newMessage = {
-          message: data.message,
-          sender: data.user === currentUser,
-        };
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-      };
-
-      socket.onclose = (event) => {
-        console.log('WebSocket connection closed', event);
-      };
-
-      setWs(socket);
-    }
-  
     return () => {
       if (ws) {
         ws.close();
       }
-
-      isMounted = false;
-      clearTimeout(debounceTimer);
     };
-  }, [channelName, currentUser]);
+  }, [channelName, userId]);
 
-  // Auto-scroll to the bottom when messages change
+  useEffect(() => {
+    // Only initialize the WebSocket connection once `currentUser` is set
+    if (currentUser && !ws) {
+      initWebSocket();  // Establish the WebSocket connection only once
+    }
+
+    // Cleanup the WebSocket connection when the component unmounts or params change
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+    };
+}, [currentUser, ws]);  // Dependency on `currentUser` and `ws` ensures WebSocket is created only once
+
+
+  // Auto-scroll to bottom when messages change
   useEffect(() => {
     if (messageContainerRef.current) {
       messageContainerRef.current.scrollTo({
@@ -108,22 +140,26 @@ const ChatArea: React.FC = () => {
     }
   }, [messages]);
 
-    //Handle sending messages
-    const sendMessage = (message: string) => {
-      //websocket
-      if (ws) {
-        ws.send(JSON.stringify({ message, user: currentUser }));
-      }
-  
-        // Send the message to the server via the route so it gets added to database meaning it gets loaded when you enter the channel :))) yipee woohoo
-        api
-        .post(`http://localhost:8000/api/channels/message/add/`, { channel: channelName, content: message })
-        .catch((error) => {
-          console.error('Error sending message:', error);
-          // Revert the UI if the message fails to send :( oh no
-          setMessages((prevMessages) => prevMessages.filter((msg) => msg.message !== message));
-        });
-    };
+  // Handle sending messages
+  const sendMessage = (message: string) => {
+    if (ws) {
+      ws.send(JSON.stringify({ message, user: currentUser }));
+    }
+
+    api
+      .post(
+        isDirectMessage
+          ? `http://localhost:8000/api/direct_messages/send-message/`
+          : `http://localhost:8000/api/channels/message/add/`,
+        isDirectMessage
+          ? { receiver: userId, message: message }
+          : { channel: channelName, content: message }
+      )
+      .catch((error) => {
+        console.error('Error sending message:', error);
+        setMessages((prevMessages) => prevMessages.filter((msg) => msg.message !== message));
+      });
+  };
 
   return (
     <div className="chat-area">
@@ -135,8 +171,6 @@ const ChatArea: React.FC = () => {
             key={index} 
             message={msg.message} 
             sender={msg.sender} 
-            //senderName={msg.senderName}
-            //timestamp={msg.timestamp} // Pass timestamp to MessageBubble
           />
         ))}
       </div>
