@@ -10,14 +10,17 @@ interface Message {
   user: {
     username: string;
   };
+  timestamp: string;
 }
 
 const ChatArea: React.FC = () => {
-  const { channelId } = useParams<{ channelId: string }>();
+  const { channelName } = useParams<{ channelName: string }>();
   const [messages, setMessages] = useState<{ message: string; sender: boolean }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [ws, setWs] = useState<WebSocket | null>(null);
   const messageContainerRef = useRef<HTMLDivElement>(null);
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -29,16 +32,19 @@ const ChatArea: React.FC = () => {
           setMessages([]);
   
           const [messagesResponse, currentUserResponse] = await Promise.all([
-            api.get(`http://localhost:8000/api/channels/${channelId}/messages/`),
+            api.get(`http://localhost:8000/api/channels/${channelName}/messages/`),
             api.get("http://localhost:8000/app/auth/user/"),
           ]);
   
           if (!isMounted) return;
   
-          const currentUser = currentUserResponse.data.username;
+          const user = currentUserResponse.data.username;
+          setCurrentUser(user);
+        
           const formattedMessages = messagesResponse.data.messages.map((message: Message) => ({
             message: message.content,
-            sender: currentUser === message.user.username,
+            sender: user === message.user.username, // this has to be user and not currentUser because it's async so currentUser still holds null at this point
+            timestamp: new Date(message.timestamp).toLocaleTimeString(), // Format the timestamp
           }));
   
           setMessages(formattedMessages);
@@ -54,30 +60,43 @@ const ChatArea: React.FC = () => {
         }
       };
   
-      if (channelId) {
+      if (channelName) {
         fetchMessages();
       }
     }, 100);
+
+    if (channelName && currentUser) {
+      const socket = new WebSocket(`ws://localhost:8000/ws/chat/${channelName}/`);
+
+      socket.onopen = () => {
+        console.log('WebSocket connection established');
+      };
+
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        const newMessage = {
+          message: data.message,
+          sender: data.user === currentUser,
+        };
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      };
+
+      socket.onclose = (event) => {
+        console.log('WebSocket connection closed', event);
+      };
+
+      setWs(socket);
+    }
   
     return () => {
+      if (ws) {
+        ws.close();
+      }
+
       isMounted = false;
       clearTimeout(debounceTimer);
     };
-  }, [channelId]);
-
-  const sendMessage = (message: string, sender: boolean) => {
-    // Optimistically update the UI
-    setMessages((prevMessages) => [...prevMessages, { message, sender }]);
-
-    // Send the message to the server
-    api
-      .post(`http://localhost:8000/api/channels/message/add/`, { channel: channelId, content: message })
-      .catch((error) => {
-        console.error('Error sending message:', error);
-        // Revert the UI if the message fails to send
-        setMessages((prevMessages) => prevMessages.filter((msg) => msg.message !== message));
-      });
-  };
+  }, [channelName, currentUser]);
 
   // Auto-scroll to the bottom when messages change
   useEffect(() => {
@@ -89,17 +108,40 @@ const ChatArea: React.FC = () => {
     }
   }, [messages]);
 
+    //Handle sending messages
+    const sendMessage = (message: string) => {
+      //websocket
+      if (ws) {
+        ws.send(JSON.stringify({ message, user: currentUser }));
+      }
+  
+        // Send the message to the server via the route so it gets added to database meaning it gets loaded when you enter the channel :))) yipee woohoo
+        api
+        .post(`http://localhost:8000/api/channels/message/add/`, { channel: channelName, content: message })
+        .catch((error) => {
+          console.error('Error sending message:', error);
+          // Revert the UI if the message fails to send :( oh no
+          setMessages((prevMessages) => prevMessages.filter((msg) => msg.message !== message));
+        });
+    };
+
   return (
     <div className="chat-area">
       <div className="message-container" ref={messageContainerRef}>
         {isLoading && <p>Loading messages...</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {messages.map((msg, index) => (
-          <MessageBubble key={index} message={msg.message} sender={msg.sender} />
+          <MessageBubble 
+            key={index} 
+            message={msg.message} 
+            sender={msg.sender} 
+            senderName={msg.senderName}
+            timestamp={msg.timestamp} // Pass timestamp to MessageBubble
+          />
         ))}
       </div>
       <div className="chat-input">
-        <ChatInputTextBox onSend={(message) => sendMessage(message, true)} />
+        <ChatInputTextBox onSend={sendMessage} />
       </div>
     </div>
   );

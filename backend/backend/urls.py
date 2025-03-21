@@ -16,6 +16,7 @@ urlpatterns = [
     path("api/channels/", include('channel.urls')),
     path("api/direct-messages/", include('direct_messages.urls')),
     path('app/user/modify/', ModifyUserView.as_view(), name='modify_user'),
+    path('api/direct_messages/', include('direct_messages.urls')),
 ]
 
 # Serve media files in development

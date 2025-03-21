@@ -28,9 +28,9 @@ def channel_list(request):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def join_channel(request, channel_id):
+def join_channel(request, channel_name):
     try:
-        channel = get_object_or_404(Channel, id=channel_id)
+        channel = get_object_or_404(Channel, name=channel_name)
         user = request.user
 
         
@@ -51,10 +51,10 @@ def join_channel(request, channel_id):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def list_messages_in_channel(request, channel_id):
+def list_messages_in_channel(request, channel_name):
     if request.method == 'GET':
         try:
-            channel = Channel.objects.get(id=channel_id)
+            channel = Channel.objects.get(name=channel_name)
         except Channel.DoesNotExist:
             return JsonResponse({'error': 'Channel not found'}, status=404)
 
@@ -81,11 +81,11 @@ def create_channel(request):
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
-def delete_channel(request, channel_id):
+def delete_channel(request, channel_name):
     if not request.user.is_admin():
         return Response({"error": "Only admins can delete channels"}, status=403)
     
-    channel = get_object_or_404(Channel, id=channel_id)
+    channel = get_object_or_404(Channel, name=channel_name)
     channel.delete()
     return Response({"message": "Channel deleted successfully"}, status=204)
 
@@ -93,11 +93,11 @@ def delete_channel(request, channel_id):
 @permission_classes([IsAuthenticated])
 def add_message(request):
     try:
-        channel_id = request.data.get("channel")
-        if not channel_id:
-            return Response({"error": "Channel ID is required"}, status=400)
+        channel_name = request.data.get("channel")
+        if not channel_name:
+            return Response({"error": "Channel name is required"}, status=400)
         
-        channel = get_object_or_404(Channel, id=channel_id)
+        channel = get_object_or_404(Channel, name=channel_name)
 
         if request.user not in channel.members.all():
             return Response({'error': 'You are not a member of this channel'}, status=403)

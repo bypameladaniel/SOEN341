@@ -44,9 +44,10 @@ const GroupSidebar = () => {
             },
           }),
         ]);
-  
+
         // Handle channels response
         setChannels(channelsResponse.data);
+
         // Handle user role response
         if (userResponse.ok) {
           const userData = await userResponse.json();
@@ -57,12 +58,12 @@ const GroupSidebar = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setLoading(false); // Set loading to false only once, after both requests
+        setLoading(false);
       }
     };
+
     fetchData();
   }, []);
-  
 
   // Function to add a new group channel
   const addChannel = async (channelName: string) => {
@@ -83,11 +84,11 @@ const GroupSidebar = () => {
       });
   };
 
-  const joinChannel = async (channelId: number) => {
+  const joinChannel = async (channelName: string) => {
     try {
       const response = await api.get("http://localhost:8000/app/auth/user/");
 
-      await api.post(`http://localhost:8000/api/channels/join/${channelId}/`, {
+      await api.post(`http://localhost:8000/api/channels/join/${channelName}/`, {
         user: response.data.username,
       });
     } catch (error: any) {
@@ -108,12 +109,12 @@ const GroupSidebar = () => {
           <p>Loading channels...</p>
         ) : (
           channels.map((channel) => (
-            <li key={channel.id} className="sidebar-item">
+            <li key={channel.name} className="sidebar-item">
               <Link
-                to={`/channels/${channel.id}`}
+                to={`/channels/${channel.name}`}
                 className="sidebar-link"
                 onClick={() => {
-                  joinChannel(channel.id);
+                  joinChannel(channel.name);
                 }}
               >
                 <MessageCircle size={20} /> {channel.name}
