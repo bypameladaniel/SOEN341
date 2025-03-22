@@ -28,7 +28,7 @@ Our team has decided to build the application as a web app while using these fra
 - **Database** : SQLite
 
 ## Features
-Three core features will be implemented in this web app.
+Three core features (and an additional feature) will be implemented in this web app.
 
 #### 1. Group Messaging System
 The first of these features will be a group messaging system in specific channels so that users can discuss whatever it is they which to get help on or talk about in a channel specific to that subject.
@@ -39,6 +39,9 @@ The second feature will be a direct messaging system where users can message eac
 #### 3. User Roles & Moderation
 The third feature will be a hierarchy of users, specifically, there will be admins and members where the admins can moderate conversations by deleting messages and also create/delete channels in which the members can send and view messages.
 
-#### 4. Message Reactions with Emojis
-The additional feature that will be implemented will be the ability for users to react to messages using a selection of emojis. 
-This feature will enhance communication by allowing users to express emotions, feedback, or agreement without sending a separate message.
+#### 4. User Profile Picture in Messaging
+The additional feature that will be implemented is the ability for users to upload, update, and display a profile picture.
+This feature will enhance personalization and user recognition by allowing users to visually identify who is sending messages in chats and channels.
+
+## Block Diagram
+![Alt text](images/BlockDiagram.png)
