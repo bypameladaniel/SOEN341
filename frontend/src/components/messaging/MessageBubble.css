@@ -1,57 +1,100 @@
-.Bubble {
-    border-radius: 20px;
-    margin: 15px;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+.messageContainer {
+    display: flex;
+    max-width: 80%;
+    margin: 8px 15px;
     word-wrap: break-word;
 }
 
+/* Sender (right-aligned) styles */
 .sender {
-    background-color: #27496D;
-    border-bottom-right-radius: 0px;
     align-self: flex-end;
+    flex-direction: row-reverse;
 }
 
+/* Receiver (left-aligned) styles */
 .receiver {
-    background-color: #21303b;
-    border-bottom-left-radius: 0px;
     align-self: flex-start;
 }
 
-.BubbleText {
-    padding: 10px;
+.Bubble {
+    border-radius: 18px;
+    padding: 10px 15px;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.sender .Bubble {
+    background-color: #27496D;
+    color: white;
+    border-bottom-right-radius: 4px;
+    margin-left: 20px;
+}
+
+.receiver .Bubble {
+    background-color: #21303b;
+    color: white;
+    border-bottom-left-radius: 4px;
+    margin-right: 20px;
 }
 
 .metaData {
-    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
     font-size: 0.8em;
     margin-bottom: 4px;
+    gap: 8px;
 }
 
 .senderName {
+    font-weight: bold;
     color: #EFE9D5;
 }
 
 .timestamp {
-    color: #405D72;
+    color: #a8c7e0;
+    font-size: 0.75em;
+    opacity: 0.8;
 }
-/* Media queries for responsiveness */
+
+.profilePicture {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+    align-self: flex-end;
+}
+
+/* Message text styling */
+.messageText {
+    line-height: 1.4;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
+    .messageContainer {
+        max-width: 85%;
+    }
+    
     .Bubble {
-        max-width: 70%;
+        padding: 8px 12px;
     }
 }
 
 @media (max-width: 480px) {
-    .Bubble {
-        max-width: 90%; 
-        margin: 10px; 
-        padding-left: 10px;
-        padding-right: 10px;
-        padding-top: 5px;
-        padding-bottom: 5px;
+    .messageContainer {
+        max-width: 90%;
+        margin: 6px 10px;
     }
-
+    
+    .Bubble {
+        padding: 6px 10px;
+        border-radius: 16px;
+    }
+    
+    .profilePicture {
+        width: 28px;
+        height: 28px;
+    }
 }
