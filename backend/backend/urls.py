@@ -13,8 +13,10 @@ urlpatterns = [
     path("app/logout/", LogoutView.as_view(), name="logout"),
     path("app/auth/user/",UserDetailView.as_view(), name = "user_detail"),
     path("",include('app.urls')),
-    path("api/channels/", include('channels.urls')),
+    path("api/channels/", include('channel.urls')),
+    path("api/direct-messages/", include('direct_messages.urls')),
     path('app/user/modify/', ModifyUserView.as_view(), name='modify_user'),
+    path('api/direct_messages/', include('direct_messages.urls')),
 ]
 
 # Serve media files in development

@@ -1,13 +1,13 @@
-import GroupSidebar from "../Sidebar/group-sidebar";
+import DirectSidebar from "../Sidebar/DM-sidebar";
 import ChatArea from "../messaging/ChatArea";
 
 import "./Chat.css";
 
-const GroupChat = () => {
+const DirectChat = () => {
     return (
         <div className="chat-page">
             <div>
-                <GroupSidebar />
+                <DirectSidebar />
             </div>
             <div className="chat-area">
                 <ChatArea />
@@ -16,4 +16,4 @@ const GroupChat = () => {
     );
 };
 
-export default GroupChat;
+export default DirectChat;

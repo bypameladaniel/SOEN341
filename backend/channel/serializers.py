@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'role', 'profile_picture']
 
 class ChannelSerializer(serializers.ModelSerializer):
-    members = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
+    members = UserSerializer(many=True, read_only=True) #serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
     members_detail = UserSerializer(many=True, read_only=True)
     picture = serializers.ImageField(required=False, allow_null=True)
     
@@ -20,7 +20,10 @@ class ChannelSerializer(serializers.ModelSerializer):
         
 class MessageSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
-    channel = serializers.PrimaryKeyRelatedField(queryset=Channel.objects.all())
+    channel = serializers.SlugRelatedField(
+    queryset=Channel.objects.all(),  # The queryset to look up the Channel model
+    slug_field='name',              # Use the 'name' field to reference the Channel
+    )
     timestamp = serializers.DateTimeField(read_only=True)
     
     class Meta:
