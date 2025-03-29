@@ -4,7 +4,7 @@ import { MessageCircle, Settings, User, Inbox } from "lucide-react";
 import "./sidebar.css";
 import logout from "../authentication/logout";
 import api from "../../api";
-import { AxiosResponse } from "axios"; // Import AxiosResponse
+import { AxiosResponse, AxiosError } from "axios"; // Import AxiosResponse
 
 // Define a type for channels
 interface Channel {
@@ -13,10 +13,17 @@ interface Channel {
 }
 
 // Define the structure of the response data
+interface User {
+  id: number;
+  username: string;
+  email: string;
+  
+}
+
 interface ChannelResponse {
   id: number;
   name: string;
-  members: any[]; // Adjust this type based on your actual data structure
+  members: User[]; 
 }
 
 const GroupSidebar = () => {
@@ -91,8 +98,12 @@ const GroupSidebar = () => {
       await api.post(`http://localhost:8000/api/channels/join/${channelName}/`, {
         user: response.data.username,
       });
-    } catch (error: any) {
-      console.error("failed to join channel:", error);
+    } catch (error) {
+        if (error instanceof AxiosError) {
+          console.error("Failed to join channel:", error.response?.data || error.message);
+      } else {
+          console.error("An unexpected error occurred:", error);
+      }
     }
   };
 

@@ -1,9 +1,10 @@
-import { useState, FormEvent } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../token";
 import { Mail, User, KeyRound } from "lucide-react";
 import "./AuthForm.css";
+import { AxiosError } from "axios";
 
 interface AuthFormProps {
   method: "Login" | "Sign Up";
@@ -22,7 +23,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ method, isAuthenticated }) => {
   const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
@@ -51,7 +52,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ method, isAuthenticated }) => {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         isAuthenticated = true;
-        console.log("hello");
+        console.log(isAuthenticated);
         navigate("/app/groupsidebar");
         window.location.reload();
       } else {
@@ -61,24 +62,27 @@ const AuthForm: React.FC<AuthFormProps> = ({ method, isAuthenticated }) => {
     } catch (error: unknown) {
       console.error(error);
 
-      if (error instanceof Error) {
-        if ((error as any).response) {
-          const response = (error as any).response;
-          if (response.status === 401) {
-            setError("Invalid credentials");
-          } else if (response.status === 400) {
-            setError("Username already exists");
-          } else {
-            setError("Something went wrong. Please try again.");
-          }
-        } else if ((error as any).request) {
-          setError("Network error. Please check your internet connection.");
+
+      if (error instanceof AxiosError) {
+        if (error.response) {
+            const { status } = error.response; // Get status properly typed
+            if (status === 401) {
+                setError("Invalid credentials");
+            } else if (status === 400) {
+                setError("Username already exists");
+            } else {
+                setError("Something went wrong. Please try again.");
+            }
+        } else if (error.request) {
+            setError("Network error. Please check your internet connection.");
         } else {
-          setError(error.message || "Something went wrong. Please try again.");
+            setError(error.message || "Something went wrong. Please try again.");
         }
-      } else {
+    } else if (error instanceof Error) {
+        setError(error.message || "Something went wrong. Please try again.");
+    } else {
         setError("An unknown error occurred.");
-      }
+    }
     } finally {
       setLoading(false);
     }
