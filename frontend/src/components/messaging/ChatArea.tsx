@@ -119,11 +119,11 @@ const ChatArea: React.FC = () => {
     setWs(socket);
   };
 
-  useEffect(() => {
-    if(!isLoading) {
-      initWebSocket();
-    }
-  }, [isLoading]);
+  // useEffect(() => {
+  //   if(!isLoading) {
+  //     initWebSocket();
+  //   }
+  // }, [isLoading]);
 
   useEffect(() => {
       fetchMessages();  // Fetch messages when component mounts or params change
@@ -134,13 +134,13 @@ const ChatArea: React.FC = () => {
     
   }, [channelName, userId]);
 
-  /*useEffect(() => {
+  useEffect(() => {
     // Only initialize the WebSocket connection once `currentUser` is set
     if (currentUser && !ws) {
       initWebSocket();  // Establish the WebSocket connection only once
     }
 }, [currentUser, ws]);  // Dependency on `currentUser` and `ws` ensures WebSocket is created only once
-*/
+
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
