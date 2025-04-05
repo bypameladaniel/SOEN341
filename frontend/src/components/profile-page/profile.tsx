@@ -85,6 +85,7 @@ const Profile: React.FC = () => {
     
             if (response.ok) {
                 const data = await response.json();
+                console.log(data);
                 setProfilePic(defaultPfp);
             } else {
                 const errorText = await response.text();
@@ -125,6 +126,7 @@ const Profile: React.FC = () => {
     const changeRole = async () => {
         const newRole = role === "member" ? "admin" : "member";
         setLoading(true);
+        console.log(loading);
         try {
             const response = await fetch("http://127.0.0.1:8000/app/user/modify/", {
                 method: "PUT",
