@@ -91,3 +91,34 @@ class CreateChannelTest(APITestCase):
         self.assertEqual(response.status_code, 403)
         print("Unauthenticated user correctly received a 403 Forbidden response.")
            
+class MessageModelTest(TestCase):
+    
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", password="password")
+        self.admin_user = User.objects.create_user(username="adminuser", password="password", is_staff=True)
+        self.channel = Channel.objects.create(name="Test Channel")
+        
+        self.message = Message.objects.create(channel=self.channel, user=self.user, content="Test message content")
+
+    def test_message_creation(self):
+        """Test message creation"""
+        message = Message.objects.get(id=self.message.id)
+        self.assertEqual(message.content, "Test message content")
+        self.assertEqual(message.user, self.user)
+        self.assertEqual(message.channel, self.channel)
+
+    def test_can_delete_as_admin(self):
+        """Test can_delete method for an admin user"""
+        self.admin_user.role = 'admin'  
+        self.admin_user.save()
+        self.assertTrue(self.message.can_delete(self.admin_user))
+
+    def test_message_string_representation(self):
+        """Test the string representation of the message"""
+        message = self.message
+        expected_str = f"{self.user.username}: {self.message.content[:20]}" 
+        self.assertEqual(str(message), expected_str)
+
+    def test_can_delete_as_non_admin(self):
+        """Test can_delete method for a non-admin user"""
+        self.assertFalse(self.message.can_delete(self.user))
