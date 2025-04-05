@@ -22,7 +22,6 @@ class UserRegistrationTest(TestCase):
             'password': 'Testpassword123!',
             'role': 'member'
         }
-        # Create a user for duplicate tests
         User.objects.create_user(
             username='existinguser',
             email='existing@example.com',
@@ -36,7 +35,7 @@ class UserRegistrationTest(TestCase):
             format='json'
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(User.objects.count(), 2)  # Including the one created in setUp
+        self.assertEqual(User.objects.count(), 2)  
         
         user = User.objects.get(username=self.valid_payload['username'])
         self.assertEqual(user.email, self.valid_payload['email'])
@@ -51,7 +50,7 @@ class UserRegistrationTest(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('username', response.data)
-        self.assertEqual(User.objects.count(), 1)  # No new user created
+        self.assertEqual(User.objects.count(), 1)  
 
 class UserLoginTestCase(APITestCase):
     def setUp(self):
