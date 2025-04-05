@@ -33,9 +33,8 @@ class ChannelListViewTest(APITestCase):
         self.client.logout()
         response = self.client.get("/api/channels/channel-list/")
         print(f"Response status code: {response.status_code}")
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        print("Unauthenticated user correctly received a 403 Forbidden response.")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        print("Unauthenticated user correctly received a 401 Unauthorized response.")
 
 class JoinChannelTest(TestCase):
 
@@ -88,6 +87,6 @@ class CreateChannelTest(APITestCase):
         self.client.logout()
         data = {"name": "New Test Channel"}
         response = self.client.post(self.create_url, data)
-        self.assertEqual(response.status_code, 403)
-        print("Unauthenticated user correctly received a 403 Forbidden response.")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        print("Unauthenticated user correctly received a 401 Unauthorized response.")
            
