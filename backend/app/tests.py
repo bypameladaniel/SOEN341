@@ -1,8 +1,57 @@
 from django.test import TestCase
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APIClient
 from rest_framework import status
 from .models import User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
+class UserRegistrationTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.register_url = reverse('user_create')
+        self.valid_payload = {
+            'username': 'testuser',
+            'email': 'test@example.com',
+            'password': 'Testpassword123!',
+            'role': 'member'
+        }
+        self.duplicate_username_payload = {
+            'username': 'existinguser',
+            'email': 'existing@example.com',
+            'password': 'Testpassword123!',
+            'role': 'member'
+        }
+        # Create a user for duplicate tests
+        User.objects.create_user(
+            username='existinguser',
+            email='existing@example.com',
+            password='testpass123'
+        )
+
+    def test_create_user_with_valid_data(self):
+        response = self.client.post(
+            self.register_url,
+            data=self.valid_payload,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(User.objects.count(), 2)  # Including the one created in setUp
+        
+        user = User.objects.get(username=self.valid_payload['username'])
+        self.assertEqual(user.email, self.valid_payload['email'])
+        self.assertTrue(user.check_password(self.valid_payload['password']))
+        self.assertEqual(user.role, self.valid_payload['role'])
+
+    def test_duplicate_username(self):
+        response = self.client.post(
+            self.register_url,
+            data=self.duplicate_username_payload,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('username', response.data)
+        self.assertEqual(User.objects.count(), 1)  # No new user created
 
 class UserLoginTestCase(APITestCase):
     def setUp(self):
