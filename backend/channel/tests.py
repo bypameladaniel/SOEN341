@@ -1,7 +1,7 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from .models import Channel
+from .models import Channel, Message
 from django.test import TestCase
 from django.utils.crypto import get_random_string
 
@@ -33,14 +33,13 @@ class ChannelListViewTest(APITestCase):
         self.client.logout()
         response = self.client.get("/api/channels/channel-list/")
         print(f"Response status code: {response.status_code}")
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        print("Unauthenticated user correctly received a 403 Forbidden response.")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        print("Unauthenticated user correctly received a 401 Unauthorized response.")
 
 class JoinChannelTest(TestCase):
 
     def setUp(self):
-        self.channel_name = 'Test Channel5'
+        self.channel_name = 'Test Channel6'
         self.channel = Channel.objects.create(name=self.channel_name)
         print(f"Created channel: {self.channel_name}")  
 
@@ -49,7 +48,7 @@ class JoinChannelTest(TestCase):
         user = get_user_model().objects.create_user(username=username, password='password')
         print(f"Created user: {username}")  
 
-        channel_name = 'Test Channel5'
+        channel_name = 'Test Channel6'
 
         try:
            
@@ -72,6 +71,10 @@ class CreateChannelTest(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(username="testuser", password="testpassword")
+
+        self.user.is_admin = lambda: True
+        self.user.save()
+        
         self.client.force_authenticate(user=self.user)
         self.create_url = "/api/channels/create/"
 
@@ -88,6 +91,37 @@ class CreateChannelTest(APITestCase):
         self.client.logout()
         data = {"name": "New Test Channel"}
         response = self.client.post(self.create_url, data)
-        self.assertEqual(response.status_code, 403)
-        print("Unauthenticated user correctly received a 403 Forbidden response.")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        print("Unauthenticated user correctly received a 401 Unauthorized response.")
            
+class MessageModelTest(TestCase):
+    
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", password="password")
+        self.admin_user = User.objects.create_user(username="adminuser", password="password", is_staff=True)
+        self.channel = Channel.objects.create(name="Test Channel")
+        
+        self.message = Message.objects.create(channel=self.channel, user=self.user, content="Test message content")
+
+    def test_message_creation(self):
+        """Test message creation"""
+        message = Message.objects.get(id=self.message.id)
+        self.assertEqual(message.content, "Test message content")
+        self.assertEqual(message.user, self.user)
+        self.assertEqual(message.channel, self.channel)
+
+    def test_can_delete_as_admin(self):
+        """Test can_delete method for an admin user"""
+        self.admin_user.role = 'admin'  
+        self.admin_user.save()
+        self.assertTrue(self.message.can_delete(self.admin_user))
+
+    def test_message_string_representation(self):
+        """Test the string representation of the message"""
+        message = self.message
+        expected_str = f"{self.user.username}: {self.message.content[:20]}" 
+        self.assertEqual(str(message), expected_str)
+
+    def test_can_delete_as_non_admin(self):
+        """Test can_delete method for a non-admin user"""
+        self.assertFalse(self.message.can_delete(self.user))

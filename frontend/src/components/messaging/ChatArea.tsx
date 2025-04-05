@@ -9,18 +9,22 @@ interface GroupMessage {
   content: string;
   user: {
     username: string;
+    profile_picture: string;
   };
   senderName: string;
   timestamp: string;
+  profilePicture: string;
 }
 
 interface DirectMessage {
   message: string;
   sender: {
     username: string;
+    profile_picture: string;
   };
   senderName: string;
   timestamp: string;
+  profilePicture: string;
 }
 
 type MessageType = GroupMessage | DirectMessage;
@@ -34,7 +38,7 @@ const ChatArea: React.FC = () => {
   const { channelName, userId } = useParams<{ channelName?: string; userId?: string }>();
   const isDirectMessage = !!userId;
   
-  const [messages, setMessages] = useState<{ message: string; sender: boolean; senderName:string; timestamp: string }[]>([]);
+  const [messages, setMessages] = useState<{ message: string; sender: boolean; senderName:string; timestamp: string; profilePicture: string; }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [ws, setWs] = useState<WebSocket | null>(null);
@@ -58,6 +62,7 @@ const ChatArea: React.FC = () => {
       const username = currentUserResponse.data.username;
       const id = currentUserResponse.data.id;
       setCurrentUser({ id, name: username });
+      console.log(messagesResponse.data.messages[1].user.profile_picture);
 
       const formattedMessages = (isDirectMessage
         ? messagesResponse.data.direct_messages
@@ -67,6 +72,9 @@ const ChatArea: React.FC = () => {
         sender: isDirectMessage ? username === (message as DirectMessage).sender.username : username === (message as GroupMessage).user.username,
         senderName: isDirectMessage ? (message as DirectMessage).sender.username : (message as GroupMessage).user.username,
         timestamp: new Date(message.timestamp).toLocaleTimeString(),
+        profilePicture: `http://localhost:8000${isDirectMessage 
+          ? (message as DirectMessage).sender.profile_picture 
+          : (message as GroupMessage).user.profile_picture}`
       }));
 
       setMessages(formattedMessages);
@@ -100,6 +108,7 @@ const ChatArea: React.FC = () => {
         sender: data.user.name === currentUser.name,
         timestamp: new Date(data.timestamp).toLocaleTimeString(),
         senderName: data.user.name,
+        profilePicture: data.user.profile_picture
       };
       setMessages((prevMessages) => [...prevMessages, newMessage]);
       {console.log(messages);}
@@ -117,7 +126,7 @@ const ChatArea: React.FC = () => {
     if(!isLoading) {
       initWebSocket();
     }
-  }, [isLoading]);
+  }, [isLoading, initWebSocket]);
 
   useEffect(() => {
       fetchMessages();  // Fetch messages when component mounts or params change
@@ -126,15 +135,15 @@ const ChatArea: React.FC = () => {
         ws.close();
       }
     
-  }, [channelName, userId]);
+  }, [channelName, userId, fetchMessages, ws]);
 
-  /*useEffect(() => {
-    // Only initialize the WebSocket connection once `currentUser` is set
-    if (currentUser && !ws) {
-      initWebSocket();  // Establish the WebSocket connection only once
-    }
-}, [currentUser, ws]);  // Dependency on `currentUser` and `ws` ensures WebSocket is created only once
-*/
+//   useEffect(() => {
+//     // Only initialize the WebSocket connection once `currentUser` is set
+//     if (currentUser && !ws) {
+//       initWebSocket();  // Establish the WebSocket connection only once
+//     }
+// }, [currentUser, ws]);  // Dependency on `currentUser` and `ws` ensures WebSocket is created only once
+
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -179,6 +188,7 @@ const ChatArea: React.FC = () => {
             sender={msg.sender} 
             senderName={msg.senderName}
             timestamp={msg.timestamp}
+            profilePicture={msg.profilePicture}
           />
         ))}
       </div>
