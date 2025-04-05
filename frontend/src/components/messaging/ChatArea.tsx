@@ -62,6 +62,7 @@ const ChatArea: React.FC = () => {
       const username = currentUserResponse.data.username;
       const id = currentUserResponse.data.id;
       setCurrentUser({ id, name: username });
+      console.log(messagesResponse.data.messages[1].user.profile_picture);
 
       const formattedMessages = (isDirectMessage
         ? messagesResponse.data.direct_messages
@@ -71,7 +72,9 @@ const ChatArea: React.FC = () => {
         sender: isDirectMessage ? username === (message as DirectMessage).sender.username : username === (message as GroupMessage).user.username,
         senderName: isDirectMessage ? (message as DirectMessage).sender.username : (message as GroupMessage).user.username,
         timestamp: new Date(message.timestamp).toLocaleTimeString(),
-        profilePicture: isDirectMessage ? (message as DirectMessage).sender.profile_picture : (message as GroupMessage).user.profile_picture
+        profilePicture: `http://localhost:8000${isDirectMessage 
+          ? (message as DirectMessage).sender.profile_picture 
+          : (message as GroupMessage).user.profile_picture}`
       }));
 
       setMessages(formattedMessages);
