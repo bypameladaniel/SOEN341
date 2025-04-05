@@ -1,7 +1,7 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from .models import Channel
+from .models import Channel, Message
 from django.test import TestCase
 from django.utils.crypto import get_random_string
 
