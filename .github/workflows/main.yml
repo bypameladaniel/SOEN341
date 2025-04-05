@@ -37,11 +37,11 @@ jobs:
           source venv/bin/activate
           python manage.py migrate
       
-      # - name: Run tests
-      #   run: |
-      #     cd backend
-      #     source venv/bin/activate
-      #     python manage.py test
+      - name: Run tests
+        run: |
+          cd backend
+          source venv/bin/activate
+          python manage.py test
   
   frontend:
     name: React (Vite + TypeScript) Frontend Tests
