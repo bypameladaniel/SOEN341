@@ -39,7 +39,7 @@ class ChannelListViewTest(APITestCase):
 class JoinChannelTest(TestCase):
 
     def setUp(self):
-        self.channel_name = 'Test Channel5'
+        self.channel_name = 'Test Channel6'
         self.channel = Channel.objects.create(name=self.channel_name)
         print(f"Created channel: {self.channel_name}")  
 
@@ -48,7 +48,7 @@ class JoinChannelTest(TestCase):
         user = get_user_model().objects.create_user(username=username, password='password')
         print(f"Created user: {username}")  
 
-        channel_name = 'Test Channel5'
+        channel_name = 'Test Channel6'
 
         try:
            
