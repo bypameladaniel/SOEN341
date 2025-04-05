@@ -71,6 +71,10 @@ class CreateChannelTest(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user(username="testuser", password="testpassword")
+
+        self.user.is_admin = lambda: True
+        self.user.save()
+        
         self.client.force_authenticate(user=self.user)
         self.create_url = "/api/channels/create/"
 
