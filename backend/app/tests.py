@@ -5,6 +5,7 @@ from rest_framework import status
 from .models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 class UserLoginTestCase(APITestCase):
     def setUp(self):
@@ -139,3 +140,22 @@ class UserLogoutTestCase(APITestCase):
         print(f"Received status code: {response.status_code}")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         print("test_logout_unauthenticated passed\n")
+
+    def test_logout_with_expired_token(self):
+        #Test that logout fails when using an expired refresh token
+        print("\nRunning test_logout_with_expired_token...")
+            
+        # Create an expired token
+        print("Generating an expired refresh token...")
+        expired_refresh = RefreshToken.for_user(self.user)
+        expired_refresh.set_exp(lifetime=-timezone.timedelta(days=1))  # Set expiration to 1 day ago
+        expired_token = str(expired_refresh)
+        
+        print("Attempting logout with expired refresh token...")
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
+        data = {'refresh': expired_token}
+        response = self.client.post(self.logout_url, data, format='json')
+        
+        print(f"Received status code: {response.status_code}")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        print("test_logout_with_expired_token passed\n")
