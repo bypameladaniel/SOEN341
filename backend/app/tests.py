@@ -145,3 +145,70 @@ class ModifyUserViewTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.user.refresh_from_db()
         self.assertEqual(self.user.username, 'newusername')
+
+    def test_update_email(self):
+        data = {'email': 'newemail@example.com'}
+        response = self.client.put(
+            self.modify_url,
+            data=data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, 'newemail@example.com')
+
+    def test_update_role(self):
+        data = {'role': 'admin'}
+        response = self.client.put(
+            self.modify_url,
+            data=data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.role, 'admin')
+
+    def test_update_profile_picture(self):
+        data = {'profile_picture': self.image}
+        response = self.client.put(
+            self.modify_url,
+            data=data,
+            format='multipart'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertIsNotNone(self.user.profile_picture)
+
+    def test_partial_update(self):
+        data = {
+            'username': 'partialupdate',
+            'email': 'partial@example.com'
+        }
+        response = self.client.put(
+            self.modify_url,
+            data=data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, 'partialupdate')
+        self.assertEqual(self.user.email, 'partial@example.com')
+
+    def test_unauthenticated_access(self):
+        self.client.credentials()  
+        data = {'username': 'shouldfail'}
+        response = self.client.put(
+            self.modify_url,
+            data=data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_empty_payload(self):
+        response = self.client.put(
+            self.modify_url,
+            data={},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Should be valid since all fields are optional
