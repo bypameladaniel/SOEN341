@@ -1,10 +1,14 @@
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
+from rest_framework.test import APITestCase
 from rest_framework import status
 from .models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from rest_framework_simplejwt.tokens import RefreshToken
+import tempfile
+from PIL import Image
 
 class UserRegistrationTest(TestCase):
     def setUp(self):
@@ -102,3 +106,42 @@ class UserLoginTestCase(APITestCase):
         
         # Check if the response contains an error message
         self.assertIn('detail', response.data)
+
+
+class ModifyUserViewTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.modify_url = reverse('modify_user')
+        
+        # test user
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='testpass123',
+            role='member'
+        )
+        
+        # JWT token for authentication
+        refresh = RefreshToken.for_user(self.user)
+        self.access_token = str(refresh.access_token)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
+        
+        # image file for profile picture testing
+        self.image = tempfile.NamedTemporaryFile(suffix='.jpg')
+        img = Image.new('RGB', (100, 100))
+        img.save(self.image)
+        self.image.seek(0)
+
+    def tearDown(self):
+        self.image.close()
+
+    def test_update_username(self):
+        data = {'username': 'newusername'}
+        response = self.client.put(
+            self.modify_url,
+            data=data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, 'newusername')
