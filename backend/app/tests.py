@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
 from .models import User
 from django.contrib.auth.password_validation import validate_password
