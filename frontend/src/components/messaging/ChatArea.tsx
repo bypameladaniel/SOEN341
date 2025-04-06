@@ -135,7 +135,9 @@ const ChatArea: React.FC = () => {
         ws.close();
       }
     
-  }, [channelName, userId, fetchMessages, ws]);
+  }, [channelName, userId]);
+
+  // , fetchMessages, ws
 
 //   useEffect(() => {
 //     // Only initialize the WebSocket connection once `currentUser` is set
