@@ -8,6 +8,9 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from rest_framework_simplejwt.tokens import RefreshToken
+import tempfile
+from PIL import Image
 
 class UserRegistrationTest(TestCase):
     def setUp(self):
@@ -105,6 +108,111 @@ class UserLoginTestCase(APITestCase):
         
         # Check if the response contains an error message
         self.assertIn('detail', response.data)
+
+class ModifyUserViewTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.modify_url = reverse('modify_user')
+        
+        # test user
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='testpass123',
+            role='member'
+        )
+        
+        # JWT token for authentication
+        refresh = RefreshToken.for_user(self.user)
+        self.access_token = str(refresh.access_token)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
+        
+        # image file for profile picture testing
+        self.image = tempfile.NamedTemporaryFile(suffix='.jpg')
+        img = Image.new('RGB', (100, 100))
+        img.save(self.image)
+        self.image.seek(0)
+
+    def tearDown(self):
+        self.image.close()
+
+    def test_update_username(self):
+        data = {'username': 'newusername'}
+        response = self.client.put(
+            self.modify_url,
+            data=data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, 'newusername')
+
+    def test_update_email(self):
+        data = {'email': 'newemail@example.com'}
+        response = self.client.put(
+            self.modify_url,
+            data=data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, 'newemail@example.com')
+
+    def test_update_role(self):
+        data = {'role': 'admin'}
+        response = self.client.put(
+            self.modify_url,
+            data=data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.role, 'admin')
+
+    def test_update_profile_picture(self):
+        data = {'profile_picture': self.image}
+        response = self.client.put(
+            self.modify_url,
+            data=data,
+            format='multipart'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertIsNotNone(self.user.profile_picture)
+
+    def test_partial_update(self):
+        data = {
+            'username': 'partialupdate',
+            'email': 'partial@example.com'
+        }
+        response = self.client.put(
+            self.modify_url,
+            data=data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, 'partialupdate')
+        self.assertEqual(self.user.email, 'partial@example.com')
+
+    def test_unauthenticated_access(self):
+        self.client.credentials()  
+        data = {'username': 'shouldfail'}
+        response = self.client.put(
+            self.modify_url,
+            data=data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_empty_payload(self):
+        response = self.client.put(
+            self.modify_url,
+            data={},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Should be valid since all fields are optional
 
 class UserLogoutTestCase(APITestCase):
     def setUp(self):
