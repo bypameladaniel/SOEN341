@@ -1,9 +1,11 @@
 from django.test import TestCase
 from django.urls import reverse
-from rest_framework.test import APIClient
-from rest_framework.test import APITestCase
+from rest_framework.test import APIClient, APITestCase
 from rest_framework import status
 from .models import User
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import get_user_model
+from django.utils import timezone
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -106,7 +108,6 @@ class UserLoginTestCase(APITestCase):
         
         # Check if the response contains an error message
         self.assertIn('detail', response.data)
-
 
 class ModifyUserViewTest(TestCase):
     def setUp(self):
@@ -212,3 +213,105 @@ class ModifyUserViewTest(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Should be valid since all fields are optional
+
+class UserLogoutTestCase(APITestCase):
+    def setUp(self):
+        """Initial setup for all test methods"""
+        print("\n=== Setting up test environment ===")
+        
+        # Create a test user
+        self.user = User.objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='testpassword123'
+        )
+        print(f"Created test user: {self.user.username} (ID: {self.user.id})")
+
+        # Generate valid tokens for the user
+        self.refresh = RefreshToken.for_user(self.user)
+        self.access_token = str(self.refresh.access_token)
+        self.refresh_token = str(self.refresh)
+        print(f"Generated access token: {self.access_token[:15]}...")
+        print(f"Generated refresh token: {self.refresh_token[:15]}...")
+        
+        # URL for logout endpoint
+        self.logout_url = reverse('logout')
+        print(f"Logout endpoint: {self.logout_url}")
+        print("=== Setup complete ===\n")
+    
+    def test_successful_logout(self):
+        #Test that a user can logout successfully with valid refresh token
+        print("\nRunning test_successful_logout...")
+        print("Authenticating with valid access token...")
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
+        
+        print("Making logout request with valid refresh token...")
+        data = {'refresh': self.refresh_token}
+        response = self.client.post(self.logout_url, data, format='json')
+        
+        print(f"Received status code: {response.status_code}")
+        self.assertEqual(response.status_code, status.HTTP_205_RESET_CONTENT)
+        
+        # Verify token blacklisting
+        from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
+        is_blacklisted = BlacklistedToken.objects.filter(token__token=self.refresh_token).exists()
+        print(f"Refresh token blacklisted: {'YES' if is_blacklisted else 'NO'}")
+        self.assertTrue(is_blacklisted)
+        
+        print("test_successful_logout passed\n")
+    
+    def test_logout_with_invalid_refresh_token(self):
+        #Test that logout fails with an invalid refresh token
+        print("\nRunning test_logout_with_invalid_refresh_token...")
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
+        
+        print("Attempting logout with invalid refresh token...")
+        data = {'refresh': 'invalid_token'}
+        response = self.client.post(self.logout_url, data, format='json')
+        
+        print(f"Received status code: {response.status_code}")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        print("test_logout_with_invalid_refresh_token passed\n")
+    
+    def test_logout_without_refresh_token(self):
+        #Test that logout fails when no refresh token is provided
+        print("\nRunning test_logout_without_refresh_token...")
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
+        
+        print("Attempting logout without refresh token...")
+        data = {}  # No refresh token
+        response = self.client.post(self.logout_url, data, format='json')
+        
+        print(f"Received status code: {response.status_code}")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        print("test_logout_without_refresh_token passed\n")
+    
+    def test_logout_unauthenticated(self):
+        #Test that unauthenticated users cannot access the logout endpoint
+        print("\nRunning test_logout_unauthenticated...")
+        print("Attempting logout without authentication...")
+        data = {'refresh': self.refresh_token}
+        response = self.client.post(self.logout_url, data, format='json')
+        
+        print(f"Received status code: {response.status_code}")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        print("test_logout_unauthenticated passed\n")
+
+    def test_logout_with_expired_token(self):
+        #Test that logout fails when using an expired refresh token
+        print("\nRunning test_logout_with_expired_token...")
+            
+        # Create an expired token
+        print("Generating an expired refresh token...")
+        expired_refresh = RefreshToken.for_user(self.user)
+        expired_refresh.set_exp(lifetime=-timezone.timedelta(days=1))  # Set expiration to 1 day ago
+        expired_token = str(expired_refresh)
+        
+        print("Attempting logout with expired refresh token...")
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
+        data = {'refresh': expired_token}
+        response = self.client.post(self.logout_url, data, format='json')
+        
+        print(f"Received status code: {response.status_code}")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        print("test_logout_with_expired_token passed\n")

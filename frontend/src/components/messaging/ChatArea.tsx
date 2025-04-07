@@ -62,7 +62,6 @@ const ChatArea: React.FC = () => {
       const username = currentUserResponse.data.username;
       const id = currentUserResponse.data.id;
       setCurrentUser({ id, name: username });
-      console.log(messagesResponse.data.messages[1].user.profile_picture);
 
       const formattedMessages = (isDirectMessage
         ? messagesResponse.data.direct_messages
@@ -72,9 +71,7 @@ const ChatArea: React.FC = () => {
         sender: isDirectMessage ? username === (message as DirectMessage).sender.username : username === (message as GroupMessage).user.username,
         senderName: isDirectMessage ? (message as DirectMessage).sender.username : (message as GroupMessage).user.username,
         timestamp: new Date(message.timestamp).toLocaleTimeString(),
-        profilePicture: `http://localhost:8000${isDirectMessage 
-          ? (message as DirectMessage).sender.profile_picture 
-          : (message as GroupMessage).user.profile_picture}`
+        profilePicture: isDirectMessage ? (message as DirectMessage).sender.profile_picture : (message as GroupMessage).user.profile_picture
       }));
 
       setMessages(formattedMessages);
@@ -126,7 +123,7 @@ const ChatArea: React.FC = () => {
     if(!isLoading) {
       initWebSocket();
     }
-  }, [isLoading, initWebSocket]);
+  }, [isLoading]);
 
   useEffect(() => {
       fetchMessages();  // Fetch messages when component mounts or params change
@@ -135,15 +132,15 @@ const ChatArea: React.FC = () => {
         ws.close();
       }
     
-  }, [channelName, userId, fetchMessages, ws]);
+  }, [channelName, userId]);
 
-//   useEffect(() => {
-//     // Only initialize the WebSocket connection once `currentUser` is set
-//     if (currentUser && !ws) {
-//       initWebSocket();  // Establish the WebSocket connection only once
-//     }
-// }, [currentUser, ws]);  // Dependency on `currentUser` and `ws` ensures WebSocket is created only once
-
+  /*useEffect(() => {
+    // Only initialize the WebSocket connection once `currentUser` is set
+    if (currentUser && !ws) {
+      initWebSocket();  // Establish the WebSocket connection only once
+    }
+}, [currentUser, ws]);  // Dependency on `currentUser` and `ws` ensures WebSocket is created only once
+*/
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
