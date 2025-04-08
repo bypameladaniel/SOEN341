@@ -6,12 +6,11 @@ from app.serializers import UserSerializer
 from .models import DirectMessage
 from .serializers import DirectMessageSerializer
 
+
 from django.shortcuts import get_object_or_404
-from .models import DirectMessage
-from django.db.models import Q
 
 
-from django.contrib.auth import get_user_model
+
 from rest_framework import serializers
 from rest_framework.decorators import api_view, permission_classes
 from django.http import JsonResponse
@@ -69,13 +68,9 @@ class SendMessageView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        receiver = self.request.data.get("receiver")  
-        if not receiver:
-            raise serializers.ValidationError({"receiver": "This field is required."})
-        
-        receiver = get_object_or_404(User, id=receiver)
-        
-        serializer.save(sender=self.request.user, receiver=receiver)
+        serializer.save(sender=self.request.user)
+
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
