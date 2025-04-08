@@ -3,8 +3,8 @@ from .models import DirectMessage
 from app.serializers import UserSerializer 
  
 class DirectMessageSerializer(serializers.ModelSerializer):
-    sender = UserSerializer(read_only=True)  # still read-only
-    # receiver = UserSerializer(read_only=True) ❌ REMOVE this line
+    sender = UserSerializer(read_only=True)  
+    
 
     class Meta:
         model = DirectMessage
