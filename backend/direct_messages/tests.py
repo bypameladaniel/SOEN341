@@ -46,4 +46,4 @@ class SendMessageTests(TestCase):
 
         self.assertEqual(DirectMessage.objects.count(), 3)
 
-    
+

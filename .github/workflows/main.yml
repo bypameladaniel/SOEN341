@@ -3,10 +3,12 @@ name: CI/CD Workflow
 on:
   push:
     branches:
-      - sprint-2
+      - sprint-4
+      - main
   pull_request:
     branches:
-      - sprint-2
+      - sprint-4
+      - main
 
 jobs:
   backend:
@@ -35,11 +37,11 @@ jobs:
           source venv/bin/activate
           python manage.py migrate
       
-      # - name: Run tests
-      #   run: |
-      #     cd backend
-      #     source venv/bin/activate
-      #     python manage.py test
+      - name: Run tests
+        run: |
+          cd backend
+          source venv/bin/activate
+          python manage.py test
   
   frontend:
     name: React (Vite + TypeScript) Frontend Tests
