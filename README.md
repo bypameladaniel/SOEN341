@@ -41,4 +41,3 @@ The third feature will be a hierarchy of users, specifically, there will be admi
 #### 4. User Profile Picture in Messaging
 The additional feature that will be implemented is the ability for users to upload, update, and display a profile picture.
 This feature will enhance personalization and user recognition by allowing users to visually identify who is sending messages in chats and channels.
-

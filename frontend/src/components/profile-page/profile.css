@@ -59,7 +59,9 @@ FFFFFF - white */
     background-color: #DAE1E7; /* Remove background color */
     border-radius: 50%;
     border: none; /* Remove border completely */
-    height: 120px;
+    height: 100px;
+    width: 100px;
+    object-fit: cover; /* Ensures image covers the entire circle */
     margin-bottom: 10px;
     display: block;
 }

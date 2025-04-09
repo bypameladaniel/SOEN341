@@ -14,36 +14,39 @@ const Profile: React.FC = () => {
     const [showUsernameInput, setShowUsernameInput] = useState<boolean>(false);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await fetch("http://127.0.0.1:8000/app/auth/user/", {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("access")}`,
-                    },
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setUsername(data.username);
-                    setEmail(data.email);
-                    setRole(data.role);
-                    setProfilePic(data.profile_picture || defaultPfp);
-                } else {
-                    console.error("Failed to fetch user data:", response.statusText);
-                }
-            } catch (error) {
-                console.error("Failed to fetch user data:", error);
+    const fetchUserData = async () => {
+        try {
+            const response = await fetch("http://127.0.0.1:8000/app/auth/user/", {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("access")}`,
+                },
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                setUsername(data.username);
+                setEmail(data.email);
+                setRole(data.role);
+                setProfilePic(data.profile_picture || defaultPfp);
+            } else {
+                console.error("Failed to fetch user data:", response.statusText);
             }
-        };
+        } catch (error) {
+            console.error("Failed to fetch user data:", error);
+        }
+    };
+    
+    useEffect(() => {
         fetchUserData();
     }, []);
+    
 
     const changeProfilePic = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
             const file = event.target.files[0];
             const formData = new FormData();
             formData.append("profile_picture", file);
-
+    
             try {
                 const response = await fetch("http://127.0.0.1:8000/app/user/modify/", {
                     method: "PUT",
@@ -52,9 +55,9 @@ const Profile: React.FC = () => {
                     },
                     body: formData,
                 });
+    
                 if (response.ok) {
-                    const data = await response.json();
-                    setProfilePic(data.profile_picture || defaultPfp);
+                    await fetchUserData();  // Re-fetch user data after upload
                 } else {
                     console.error("Failed to update profile picture:", response.statusText);
                 }
@@ -63,6 +66,7 @@ const Profile: React.FC = () => {
             }
         }
     };
+    
 
     const removeProfilePic = async () => {
         try {
@@ -81,6 +85,7 @@ const Profile: React.FC = () => {
     
             if (response.ok) {
                 const data = await response.json();
+                console.log(data);
                 setProfilePic(defaultPfp);
             } else {
                 const errorText = await response.text();
@@ -121,6 +126,7 @@ const Profile: React.FC = () => {
     const changeRole = async () => {
         const newRole = role === "member" ? "admin" : "member";
         setLoading(true);
+        console.log(loading);
         try {
             const response = await fetch("http://127.0.0.1:8000/app/user/modify/", {
                 method: "PUT",
